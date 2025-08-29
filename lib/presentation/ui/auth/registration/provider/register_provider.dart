@@ -10,7 +10,6 @@ class RegisterProvider extends ChangeNotifier {
   String? _passwordError;
   String? _confirmPasswordError;
 
-
   String get username => _username;
 
   String get password => _password;
@@ -23,9 +22,6 @@ class RegisterProvider extends ChangeNotifier {
 
   String? get confirmPasswordError => _confirmPasswordError;
 
-
-  //LoginInput get loginInput => LoginInput(username: _username, password: _password);
-
   void updateUsername(String username) {
     _username = username;
     if (_username.length >= 3) {
@@ -33,7 +29,6 @@ class RegisterProvider extends ChangeNotifier {
     } else {
       _usernameError = 'Username format is invalid';
     }
-    print(username);
     notifyListeners();
   }
 
@@ -44,7 +39,6 @@ class RegisterProvider extends ChangeNotifier {
     } else {
       _passwordError = 'Password is too short';
     }
-    print(password);
     notifyListeners();
   }
 
@@ -59,8 +53,8 @@ class RegisterProvider extends ChangeNotifier {
   }
 
   bool get isFormValid {
-    final isValidField = _usernameError == null && _passwordError == null;
-    final isValidValue = _username.isNotEmpty && _password.isNotEmpty;
+    final isValidField = _usernameError == null && _passwordError == null && _confirmPasswordError == null;
+    final isValidValue = _username.isNotEmpty && _password.isNotEmpty && _confirmPassword.isNotEmpty && _password == _confirmPassword;
     return isValidField && isValidValue;
   }
 }

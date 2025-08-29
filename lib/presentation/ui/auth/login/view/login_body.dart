@@ -39,27 +39,19 @@ class LoginBody extends StatelessWidget {
               keyboardType: TextInputType.name,
               onChanged: provider.updateUsername,
             ),
-            16.verticalSpace,
+            12.verticalSpace,
             PrimaryTextFormField(
               hintText: "password",
               obscureText: true,
               onChanged: provider.updatePassword,
             ),
-            16.verticalSpace,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child:  PrimaryText("Forgot Password?"),
-                )
-              ],
-            ),
+            12.verticalSpace,
             Spacer(),
-
             PrimaryButton(
               title: "Login",
-              onPressed: () {},
+              onPressed: () {
+                context.goNamed('home');
+              },
               isDisabled: !provider.isFormValid,
             ),
             12.verticalSpace,

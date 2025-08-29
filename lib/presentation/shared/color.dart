@@ -15,6 +15,7 @@ class UIColor {
   // Neutral/Gray Shades
   static const Color grayLight = Color(0xFFD1D1D6);
   static const Color grayDark = Color(0xFF3A3A3C);
+  static const Color grayDarker = Color(0xFF767680);
 
   // Status Colors
   static const Color success = Color(0xFF34C759); // yaşıl

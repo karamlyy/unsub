@@ -34,7 +34,6 @@ class LoginProvider extends ChangeNotifier {
     } else {
       _usernameError = 'Username format is invalid';
     }
-    print(username);
     notifyListeners();
   }
 
@@ -45,13 +44,14 @@ class LoginProvider extends ChangeNotifier {
     } else {
       _passwordError = 'Password is too short';
     }
-    print(password);
     notifyListeners();
   }
 
   bool get isFormValid {
     final isValidField = _usernameError == null && _passwordError == null;
     final isValidValue = _username.isNotEmpty && _password.isNotEmpty;
+    print(isValidField);
+    print(isValidValue);
     return isValidField && isValidValue;
   }
 }
