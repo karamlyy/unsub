@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:unsub/presentation/shared/color.dart';
-import 'package:unsub/presentation/ui/auth/register/provider/register_provider.dart';
+import 'package:unsub/presentation/ui/auth/registration/provider/register_provider.dart';
 import 'package:unsub/presentation/widgets/button/primary_button.dart';
 import 'package:unsub/presentation/widgets/text-field/primary_textfield.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
@@ -53,7 +54,7 @@ class RegisterBody extends StatelessWidget {
             Spacer(),
             PrimaryButton(
               title: "Next",
-              onPressed: () {},
+              onPressed: () => context.goNamed('select-subscriptions'),
               isDisabled: !provider.isFormValid,
             ),
           ],

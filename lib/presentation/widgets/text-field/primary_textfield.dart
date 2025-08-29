@@ -6,6 +6,7 @@ class PrimaryTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final String? hintText;
   final String? headerText;
+  final String? initialValue;
   final bool obscureText;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
@@ -17,12 +18,16 @@ class PrimaryTextFormField extends StatelessWidget {
   final void Function(String)? onFieldSubmitted;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
+
 
   const PrimaryTextFormField({
     super.key,
     this.controller,
     this.hintText,
     this.headerText,
+    this.initialValue,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
@@ -34,6 +39,9 @@ class PrimaryTextFormField extends StatelessWidget {
     this.onFieldSubmitted,
     this.prefixIcon,
     this.suffixIcon,
+    this.readOnly = false,            // NEW
+    this.onTap,
+
   });
 
   @override
@@ -43,12 +51,15 @@ class PrimaryTextFormField extends StatelessWidget {
       obscureText: obscureText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
+      initialValue: initialValue,
       maxLines: maxLines,
       minLines: minLines,
       enabled: enabled,
       validator: validator,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
+      readOnly: readOnly,
+      onTap: onTap,
       style: TextStyle(
         fontFamily: "SFPro",
         fontSize: 16.sp,
@@ -74,11 +85,17 @@ class PrimaryTextFormField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: UIColor.textfieldBackground, width: 1.5),
+          borderSide: BorderSide(
+            color: UIColor.textfieldBackground,
+            width: 1.5,
+          ),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: UIColor.textfieldBackground.withValues(alpha: 0.4), width: 1),
+          borderSide: BorderSide(
+            color: UIColor.textfieldBackground.withValues(alpha: 0.4),
+            width: 1,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
