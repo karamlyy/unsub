@@ -1,42 +1,42 @@
 import 'package:unsub/data/model/auth/login_model.dart';
+import 'package:unsub/data/model/auth/register_model.dart';
+import 'package:unsub/data/model/auth/me_model.dart';
 
 class ResponseModel<T> {
-  T? response;
-  int? code;
-  String? message;
+  final int? status;
+  final String? message;
+  final T? response;
+  final List<dynamic>? errors;
 
-  ResponseModel({
-    this.response,
-    this.code,
-    this.message,
-  });
+  bool get hasData => response != null;
 
-  factory ResponseModel.fromJson(dynamic json) {
-    T? getData(dynamic data) {
+  ResponseModel({this.status, this.message, this.response, this.errors});
+
+  factory ResponseModel.fromJson(Map<String, dynamic> json) {
+    T? parseData(dynamic root) {
+      final data = (root is Map<String, dynamic> && root["data"] is Map<String, dynamic>)
+          ? root["data"] as Map<String, dynamic>
+          : (root is Map<String, dynamic> ? root : null);
+
       if (data == null) return null;
-      if (T == LoginModel) {
-        return LoginModel.fromJson(data) as T?;
-      }
 
-      return data as T?;
+      switch (T) {
+        case LoginModel:
+          return LoginModel.fromJson(data) as T;
+        case RegisterModel:
+          return RegisterModel.fromJson(data) as T;
+        case MeModel:
+          return MeModel.fromJson(data) as T;
+        default:
+          return data as T; // generic fallback
+      }
     }
 
-    final isList = json is List;
-    final isMap = json is Map;
-    final isString = json is String;
-
-    return ResponseModel(
-      code: isList || isMap || isString ? null : json["code"],
-      message: isList || isMap || isString ? null : json["message"],
-      response: getData(json),
+    return ResponseModel<T>(
+      status: json["status"] is int ? json["status"] as int : null,
+      message: json["message"] as String?,
+      response: parseData(json),
+      errors: (json["errors"] is List) ? json["errors"] as List : null,
     );
-  }
-
-  bool get hasData {
-    return response != null;
-  }
-
-  bool get isUnauthorized {
-    return code == 401;
   }
 }

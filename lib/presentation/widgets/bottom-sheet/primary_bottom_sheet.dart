@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/widgets/button/primary_button.dart';
+import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
 
 class PrimaryBottomSheet {
@@ -15,13 +16,13 @@ class PrimaryBottomSheet {
       }) async {
     return await showModalBottomSheet(
       context: context,
-      barrierColor: UIColor.textPrimary.withValues(alpha: 0.3),
+      barrierColor: UIColor.primary.withValues(alpha: 0.3),
       sheetAnimationStyle: AnimationStyle(
         curve: Curves.fastEaseInToSlowEaseOut,
         reverseDuration: const Duration(milliseconds: 300),
         duration: const Duration(milliseconds: 500),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: UIColor.primary,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
       ),
@@ -48,10 +49,8 @@ class PrimaryBottomSheet {
                       ),
                     ),
                   if (text != null)
-                    Text(
+                    PrimaryText(
                       text,
-                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
-                      textAlign: TextAlign.center,
                     ),
                   10.verticalSpace,
                   child ?? const SizedBox.shrink(),

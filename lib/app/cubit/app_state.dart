@@ -5,5 +5,5 @@ class Authorized extends GenericState {}
 
 class Unauthorized extends GenericState {}
 
-class SplashScreen extends GenericState {}
+class Onboarding extends GenericState {}
 

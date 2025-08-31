@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/ui/profile/provider/profile_provider.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
+import 'package:unsub/presentation/widgets/indicator/loading_indicator.dart';
 
 class ProfileBody extends StatelessWidget {
   const ProfileBody({super.key});
@@ -19,10 +20,19 @@ class ProfileBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            if (provider.isLoading)
+              const LoadingIndicator(),
+            if (provider.errorMessage != null && !provider.isLoading)
+              PrimaryText(provider.errorMessage!, color: UIColor.error),
+            if (!provider.isLoading) ...[
             CircleAvatar(
               radius: 34.r,
               backgroundColor: UIColor.grayDark.withValues(alpha: .25),
-              child: PrimaryText("KA"),
+              child: PrimaryText(
+                provider.username.isNotEmpty ? provider.username.toUpperCase()[0] : "U",
+                fontSize: 32,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             24.verticalSpace,
             PrimaryText(
@@ -34,6 +44,7 @@ class ProfileBody extends StatelessWidget {
             ),
             SizedBox(width: double.infinity,),
             const Spacer(),
+            ],
           ],
         ),
       ),

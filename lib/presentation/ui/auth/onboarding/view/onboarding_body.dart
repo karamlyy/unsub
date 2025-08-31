@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unsub/config/router.dart';
+import 'package:unsub/presentation/navigation/app_router.dart';
+import 'package:unsub/presentation/navigation/navigation.dart';
 import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/widgets/button/secondary_button.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
@@ -36,7 +38,7 @@ class OnboardingBody extends StatelessWidget {
             child: SecondaryButton(
               title: "Login",
               onPressed: () {
-                context.goNamed(RouteNames.login);
+                Navigation.push(Routes.login);
               },
             ),
           ),
