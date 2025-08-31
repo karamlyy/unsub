@@ -103,8 +103,35 @@ class ApiService {
     }
   }
 
+
   Future<HttpException> _handleError(DioException e) async {
-    return e.error as HttpException;
+    final statusCode = e.response?.statusCode;
+    String message = "An unknown error occurred";
+
+    if (e.type == DioExceptionType.connectionError) {
+      message = "Network connection error";
+    } else if (e.response != null) {
+      final data = e.response!.data;
+      if (data is Map<String, dynamic>) {
+        if (data['messages'] is List) {
+          message = (data['messages'] as List).join(", ");
+        } else if (data['message'] is String) {
+          message = data['message'];
+        } else if (data['error'] is String) {
+          message = data['error'];
+        }
+      } else if (data is String && data.isNotEmpty) {
+        message = data;
+      } else if (e.message != null) {
+        message = e.message!;
+      } else {
+        message = "HTTP $statusCode";
+      }
+    } else if (e.message != null) {
+      message = e.message!;
+    }
+
+    return HttpException(error: ErrorMessage(message: message, code: statusCode));
   }
 
   bool _shouldRetry(DioException e) {

@@ -14,15 +14,18 @@ class ApiInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final prefs = await PreferencesService.instance;
-    options.headers["accept"] = "*/*";
-    options.headers["Accept-Encoding"] = "gzip, deflate, br";
+    options.headers["accept"] = "application/json";
 
-    if (prefs.accessToken != null) {
-      options.headers["Authorization"] = prefs.accessToken;
+    final isAuthPath = options.path.contains(ApiRoutes.login) || options.path.contains(ApiRoutes.refreshToken);
+
+    final accessToken = prefs.accessToken;
+    if (!isAuthPath && accessToken != null && accessToken.isNotEmpty) {
+      options.headers["Authorization"] =
+      accessToken.startsWith("Bearer ") ? accessToken : "Bearer $accessToken";
     }
 
     log("HEADERS: ${options.headers}");
-    return handler.next(options);
+    handler.next(options);
   }
 
   @override
@@ -34,22 +37,51 @@ class ApiInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     final prefs = await PreferencesService.instance;
 
-    if (err.response?.statusCode == 401) {
-      RequestOptions options = err.requestOptions;
+    final isAuthPath =
+        err.requestOptions.path.contains(ApiRoutes.login) ||
+            err.requestOptions.path.contains(ApiRoutes.refreshToken);
+
+    final refreshToken = prefs.refreshToken;
+    if (err.response?.statusCode == 401 &&
+        !isAuthPath &&
+        refreshToken != null &&
+        refreshToken.isNotEmpty &&
+        (err.requestOptions.extra["__retriedWithRefresh__"] != true)) {
+      final RequestOptions options = err.requestOptions;
 
       try {
         final refreshResult = await dio.post(
           ApiRoutes.refreshToken,
-          options: Options(
-            headers: {
-              "Refresh-Token": prefs.refreshToken,
-            },
-          ),
+          data: {"refreshToken": refreshToken},
+          options: Options(),
         );
 
-        final newAccessToken = refreshResult.data["token"];
+        String? newAccessToken;
+        String? newRefreshToken;
+        final data = refreshResult.data;
+        if (data is Map<String, dynamic>) {
+          final inner = (data["data"] is Map<String, dynamic>)
+              ? data["data"] as Map<String, dynamic>
+              : data;
+          newAccessToken = inner["accessToken"] as String?;
+          newRefreshToken = inner["refreshToken"] as String?;
+        }
+
+        if (newAccessToken == null || newAccessToken.isEmpty) {
+          await _clearSession();
+          return handler.reject(err);
+        }
+
         await prefs.setAccessToken(newAccessToken);
-        options.headers["Authorization"] = newAccessToken;
+        if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+          await prefs.setRefreshToken(newRefreshToken);
+        }
+
+        options.headers["Authorization"] = newAccessToken.startsWith("Bearer ")
+            ? newAccessToken
+            : "Bearer $newAccessToken";
+
+        options.extra["__retriedWithRefresh__"] = true;
 
         final response = await dio.fetch(options);
         return handler.resolve(response);
@@ -58,29 +90,51 @@ class ApiInterceptor extends Interceptor {
         return handler.reject(err);
       }
     }
-
-    String errorMessage = "An unknown error occurred";
-
-    if (err.response != null) {
-      final statusCode = err.response?.statusCode;
-      final data = err.response?.data;
-
-      if (data is Map<String, dynamic>) {
-        if (data.containsKey('code') && data['code'] == "429") {
-          _clearSession();
-          return;
-        } else if (data.containsKey('messages') && data['messages'] is List) {
-          errorMessage = data['messages'].join(", ");
-        } else if (data.containsKey('message')) {
-          errorMessage = data['message'];
-        }
-      } else if (data is String) {
-        errorMessage = data;
-      }
-
-      log("ERROR[$statusCode] => MESSAGE: $errorMessage");
+    if (err.response?.statusCode == 429) {
+      await _clearSession();
+      return handler.reject(
+        DioException(
+          requestOptions: err.requestOptions,
+          response: err.response,
+          type: err.type,
+          error: HttpException(
+            error: ErrorMessage(
+              message: "Too many requests. Please try again later.",
+              code: 429,
+            ),
+          ),
+        ),
+      );
     }
 
+    // ✅ Daha informativ error parsing
+    String errorMessage = "An unknown error occurred";
+    int? statusCode = err.response?.statusCode;
+
+    if (err.type == DioExceptionType.connectionError) {
+      errorMessage = "Network connection error";
+    }
+
+    final data = err.response?.data;
+    if (data is Map<String, dynamic>) {
+      if (data['messages'] is List) {
+        errorMessage = (data['messages'] as List).join(", ");
+      } else if (data['message'] is String) {
+        errorMessage = data['message'] as String;
+      } else if (data['error'] is String) {
+        errorMessage = data['error'] as String;
+      } else if (data['error'] is Map && (data['error'] as Map)['message'] is String) {
+        errorMessage = (data['error'] as Map)['message'] as String;
+      }
+    } else if (data is String && data.isNotEmpty) {
+      errorMessage = data;
+    } else if (err.message != null && err.message!.isNotEmpty) {
+      errorMessage = err.message!;
+    } else if (statusCode != null) {
+      errorMessage = "HTTP $statusCode";
+    }
+
+    log("DIO ERROR => type: ${err.type} status: $statusCode data: ${err.response?.data}");
     handler.reject(
       DioException(
         requestOptions: err.requestOptions,
@@ -89,14 +143,12 @@ class ApiInterceptor extends Interceptor {
         error: HttpException(
           error: ErrorMessage(
             message: errorMessage,
-            code: err.response?.statusCode,
+            code: statusCode,
           ),
         ),
       ),
     );
   }
-
-
 
   Future<void> _clearSession() async {
     final prefs = await PreferencesService.instance;

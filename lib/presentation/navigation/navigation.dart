@@ -6,13 +6,13 @@ class Navigation {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   static Future push(Routes route, {Object? arguments}) {
-    return navigatorKey.currentState!.pushNamed(route.path, arguments: arguments);
+    return navigatorKey.currentState!.pushNamed(route.route, arguments: arguments);
   }
 
 
   static pushReplacementNamed(Routes route, {Object? arguments}) {
     return navigatorKey.currentState!
-        .pushReplacementNamed(route.path, arguments: arguments);
+        .pushReplacementNamed(route.route, arguments: arguments);
   }
 
   static pushReplacement(Widget widget) {
@@ -21,7 +21,7 @@ class Navigation {
 
   static pushNamedAndRemoveUntil(Routes route, {Object? arguments}) {
     return navigatorKey.currentState!.pushNamedAndRemoveUntil(
-      route.path,
+      route.route,
           (route) => false,
       arguments: arguments,
     );
@@ -39,6 +39,6 @@ class Navigation {
   }
 
   static void popUntil(Routes route) {
-    navigatorKey.currentState!.popUntil(ModalRoute.withName(route.path));
+    navigatorKey.currentState!.popUntil(ModalRoute.withName(route.route));
   }
 }

@@ -17,8 +17,7 @@ class Injector {
   }
 
   static _registerComponents() {
-    //locator.registerFactory<ShareManager>(() => ShareManager());
-    //locator.registerFactory<DatePickerHelper>(() => DatePickerHelper());
+
   }
 
   static _registerRepositories() {

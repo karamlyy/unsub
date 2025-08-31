@@ -72,7 +72,6 @@ class HomeProvider extends ChangeNotifier {
     for (var item in _items) {
       total += item.price;
     }
-    print("Total price of subscriptions: \$${total.toStringAsFixed(2)}");
     return total;
   }
 

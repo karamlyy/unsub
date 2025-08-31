@@ -7,27 +7,16 @@ import 'package:unsub/presentation/ui/auth/login/provider/login_provider.dart';
 import 'package:unsub/presentation/ui/auth/login/view/login_body.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key,});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: UIColor.transparent,
-        surfaceTintColor: UIColor.transparent,
-        leading: IconButton(
-          icon: Icon(CupertinoIcons.chevron_back, color: UIColor.primary),
-          onPressed: () {
-            context.goNamed("onboarding");
-          },
-        ),
-      ),
+      appBar: null,
       body: ChangeNotifierProvider(
-        create: (context) => LoginProvider(),
-        child: LoginBody(),
+        create: (_) => LoginProvider(),
+        child: const LoginBody(),
       ),
     );
   }
 }
-
-
