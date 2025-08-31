@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:unsub/presentation/navigation/app_router.dart';
+import 'package:unsub/presentation/navigation/navigation.dart';
 import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/ui/home/provider/home_provider.dart';
 import 'package:unsub/presentation/utils/formatter/date_formatter.dart';
+import 'package:unsub/presentation/widgets/button/primary_button.dart';
 import 'package:unsub/presentation/widgets/dialog/confirm_dialog.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
@@ -62,8 +65,15 @@ class HomeBody extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          PrimaryText('${provider.sumOfPrices()}\$', fontSize: 17,),
-                          PrimaryText("${items.length} active subscriptions", color: UIColor.textSecondary.withValues(alpha: 0.5), fontSize: 14,),
+                          PrimaryText(
+                            '${provider.sumOfPrices()}\$',
+                            fontSize: 17,
+                          ),
+                          PrimaryText(
+                            "${items.length} active subscriptions",
+                            color: UIColor.textSecondary.withValues(alpha: 0.5),
+                            fontSize: 14,
+                          ),
                         ],
                       ),
                     ],
@@ -122,8 +132,7 @@ class HomeBody extends StatelessWidget {
                                 return await showPlatformConfirmDialog(
                                   context,
                                   title: 'Delete?',
-                                  message:
-                                      'Remove ${sub.name} subscription?',
+                                  message: 'Remove ${sub.name} subscription?',
                                   confirmText: 'Delete',
                                   cancelText: 'Cancel',
                                   isDestructive: true,
@@ -166,7 +175,9 @@ class HomeBody extends StatelessWidget {
                                       color: UIColor.textPrimary,
                                     ),
                                     PrimaryText(
-                                      AppDateFormatter.monthDay(sub.nextBilling),
+                                      AppDateFormatter.monthDay(
+                                        sub.nextBilling,
+                                      ),
                                       fontSize: 14,
                                       color: provider.isExpiringSoon(sub)
                                           ? UIColor.error
@@ -184,6 +195,10 @@ class HomeBody extends StatelessWidget {
               ),
             ),
             12.verticalSpace,
+            PrimaryButton(
+              title: "Add New",
+              onPressed: () => Navigation.push(Routes.addSubscription),
+            ),
           ],
         ),
       ),

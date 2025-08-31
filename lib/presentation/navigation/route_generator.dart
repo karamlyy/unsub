@@ -11,6 +11,9 @@ import 'package:unsub/presentation/ui/auth/login/view/login_page.dart';
 import 'package:unsub/presentation/ui/auth/onboarding/view/onboarding_page.dart';
 import 'package:unsub/presentation/ui/auth/registration/view/register/register_page.dart';
 import 'package:unsub/presentation/ui/home/view/home_page.dart';
+import 'package:unsub/presentation/ui/instructions/view/instructions_page.dart';
+import 'package:unsub/presentation/ui/payment/view/payment_page.dart';
+import 'package:unsub/presentation/ui/profile/view/profile_page.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
 Route<dynamic> createPageRoute(Widget page, [RouteSettings? settings]) {
@@ -28,8 +31,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return createPageRoute(const RegisterPage(), settings);
     case Routes.home:
       return createPageRoute(const HomePage(), settings);
+    case Routes.instructions:
+      return createPageRoute(const InstructionsPage(), settings);
+    case Routes.profile:
+      return createPageRoute(const ProfilePage(), settings);
     case Routes.addSubscription:
       return createPageRoute(const AddSubscriptionPage(), settings);
+    case Routes.payment:
+      return createPageRoute(const PaymentPage(), settings);
     default:
       return createPageRoute(
         const Scaffold(body: Center(child: Text('No route defined'))),
@@ -56,8 +65,14 @@ class RouteGenerator {
         return _push(LoginPage());
       case Routes.register:
         return _push(RegisterPage());
+      case Routes.instructions:
+        return _push(const InstructionsPage());
+      case Routes.profile:
+        return _push(const ProfilePage());
       case Routes.addSubscription:
         return _push(AddSubscriptionPage());
+      case Routes.payment:
+        return _push(const PaymentPage());
       case Routes.none:
         return _errorRoute();
       default:

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:unsub/presentation/navigation/navigation.dart';
 import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/ui/add-subscription/provider/add_subscription_provider.dart';
 import 'package:unsub/presentation/ui/add-subscription/view/add_subscription_body.dart';
@@ -19,9 +20,7 @@ class AddSubscriptionPage extends StatelessWidget {
         title: PrimaryText("Add Subscription"),
         leading: IconButton(
           icon: const Icon(CupertinoIcons.chevron_back, color: UIColor.primary),
-          onPressed: () {
-            context.goNamed("home");
-          },
+          onPressed: () => Navigation.pop(),
         ),
 
       ),

@@ -1,37 +1,19 @@
-import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
-import 'package:unsub/app/view/di.dart';
+import 'package:flutter/material.dart';
 import 'package:unsub/data/repository/auth_repository.dart';
 import 'package:unsub/data/repository/payment_methods_repository.dart';
 
-class ProfileMenuItem {
-  final IconData icon;
-  final String title;
-  final String? routeName;
-  final void Function(BuildContext)? onTap;
+import '../../../../app/view/di.dart';
 
-  const ProfileMenuItem({
-    required this.icon,
-    required this.title,
-    this.routeName,
-    this.onTap,
-  });
-}
+class PaymentProvider extends ChangeNotifier {
 
-class ProfileProvider extends ChangeNotifier {
   final AuthRepository _authRepository = locator.get<AuthRepository>();
   final PaymentMethodsRepository _paymentMethodsRepository = locator.get<PaymentMethodsRepository>();
 
 
-  String username = "";
   bool isLoading = true;
   String? errorMessage;
 
   bool _isDisposed = false;
-
-  ProfileProvider() {
-    _loadMe();
-  }
 
   @override
   void dispose() {
@@ -44,23 +26,6 @@ class ProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _loadMe() async {
-    isLoading = true;
-    _safeNotify();
-    final result = await _authRepository.me();
-    result.fold(
-      (l) {
-        errorMessage = l.error.message;
-        isLoading = false;
-        _safeNotify();
-      },
-      (r) {
-        username = r.username;
-        isLoading = false;
-        _safeNotify();
-      },
-    );
-  }
 
   Future<void> getCardBrands() async {
     isLoading = true;
@@ -109,9 +74,4 @@ class ProfileProvider extends ChangeNotifier {
     });
   }
 
-
-
-  void logout() {
-    print("User logged out");
-  }
 }
