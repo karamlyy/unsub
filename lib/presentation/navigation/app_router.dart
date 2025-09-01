@@ -6,7 +6,9 @@ enum Routes {
   profile( 'profile'),
   instructions( 'instructions'),
   addSubscription('add-subscription'),
+  payment('payment'),
   none( 'none');
+
 
 
 

@@ -1,6 +1,11 @@
 import 'package:unsub/data/model/auth/login_model.dart';
 import 'package:unsub/data/model/auth/register_model.dart';
 import 'package:unsub/data/model/auth/me_model.dart';
+import 'package:unsub/data/model/payment-methods/add_payment_method_model.dart';
+import 'package:unsub/data/model/payment-methods/card_brands_model.dart';
+import 'package:unsub/data/model/payment-methods/delete_payment_method_model.dart';
+import 'package:unsub/data/model/payment-methods/payment_methods_model.dart';
+import 'package:unsub/data/model/payment-methods/types_model.dart';
 
 class ResponseModel<T> {
   final int? status;
@@ -27,8 +32,18 @@ class ResponseModel<T> {
           return RegisterModel.fromJson(data) as T;
         case MeModel:
           return MeModel.fromJson(data) as T;
+        case CardBrandsModel:
+          return CardBrandsModel.fromJson(data) as T;
+        case TypesModel:
+          return TypesModel.fromJson(data) as T;
+        case PaymentMethodsModel:
+          return PaymentMethodsModel.fromJson(data) as T;
+        case AddPaymentMethodModel:
+          return AddPaymentMethodModel.fromJson(data) as T;
+        case DeletePaymentMethodModel:
+          return DeletePaymentMethodModel.fromJson(data) as T;
         default:
-          return data as T; // generic fallback
+          return data as T;
       }
     }
 

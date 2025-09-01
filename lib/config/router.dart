@@ -9,7 +9,6 @@ import 'package:unsub/presentation/ui/auth/registration/view/select_subsriptions
 import 'package:unsub/presentation/ui/auth/registration/view/selected_subscription/selected_subscription_page.dart';
 import 'package:unsub/presentation/ui/home/view/home_page.dart';
 import 'package:unsub/presentation/ui/instructions/view/instructions_page.dart';
-import 'package:unsub/presentation/ui/profile/view/edit_profile_page.dart';
 import 'package:unsub/presentation/ui/profile/view/profile_page.dart';
 import 'package:unsub/presentation/widgets/navbar/bottom_navbar.dart';
 
@@ -85,13 +84,7 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-    GoRoute(
-      path: '/edit-profile',
-      name: 'edit-profile',
-      builder: (BuildContext context, GoRouterState state) {
-        return const EditProfilePage();
-      },
-    ),
+
     GoRoute(
       path: '/add-subscription',
       name: 'add-subscription',

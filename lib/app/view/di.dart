@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:unsub/data/repository/auth_repository.dart';
+import 'package:unsub/data/repository/payment_methods_repository.dart';
 import 'package:unsub/data/service/api/api.dart';
 
 GetIt locator = GetIt.instance;
@@ -22,5 +23,7 @@ class Injector {
 
   static _registerRepositories() {
     locator.registerFactory<AuthRepository>(() => AuthRepositoryImpl(locator.get()));
+    locator.registerFactory<PaymentMethodsRepository>(() => PaymentMethodsRepositoryImpl(locator.get()));
+
   }
 }
