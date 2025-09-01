@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:unsub/data/repository/auth_repository.dart';
+import 'package:unsub/app/view/di.dart';
+import 'package:unsub/data/endpoint/payment/add_payment_method_endpoint.dart';
 import 'package:unsub/data/repository/payment_methods_repository.dart';
-
-import '../../../../app/view/di.dart';
+import 'package:unsub/data/model/payment-methods/payment_methods_model.dart';
 
 class PaymentProvider extends ChangeNotifier {
 
-  final AuthRepository _authRepository = locator.get<AuthRepository>();
   final PaymentMethodsRepository _paymentMethodsRepository = locator.get<PaymentMethodsRepository>();
-
 
   bool isLoading = true;
   String? errorMessage;
+  List<PaymentMethod> paymentMethods = [];
 
   bool _isDisposed = false;
+
+  PaymentProvider() {
+    getPaymentMethods();
+  }
 
   @override
   void dispose() {
@@ -26,7 +29,6 @@ class PaymentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   Future<void> getCardBrands() async {
     isLoading = true;
     _safeNotify();
@@ -36,7 +38,6 @@ class PaymentProvider extends ChangeNotifier {
       isLoading = false;
       _safeNotify();
     }, (r) {
-      print(r.data);
       isLoading = false;
       _safeNotify();
     });
@@ -52,7 +53,6 @@ class PaymentProvider extends ChangeNotifier {
       isLoading = false;
       _safeNotify();
     }, (r) {
-      print(r.data);
       isLoading = false;
       _safeNotify();
     });
@@ -68,10 +68,45 @@ class PaymentProvider extends ChangeNotifier {
       isLoading = false;
       _safeNotify();
     }, (r) {
-      print(r.data);
+      paymentMethods = r.data ?? [];
       isLoading = false;
       _safeNotify();
     });
   }
+
+  final input = AddPaymentMethodInput(
+    label: "mans",
+    value: "mans",
+    isDefault: null,
+    type: "cash",
+    cardBrandId: "",
+  );
+
+  Future<void> addPaymentMethod() async {
+    isLoading = true;
+    _safeNotify();
+    final result = await _paymentMethodsRepository.addPaymentMethod(input);
+    result.fold((l) {
+      errorMessage = l.error.message;
+      isLoading = false;
+      _safeNotify();
+    }, (r) {
+      getPaymentMethods();
+    });
+  }
+
+  Future<void> deletePaymentMethod(String id) async {
+    isLoading = true;
+    _safeNotify();
+    final result = await _paymentMethodsRepository.deletePaymentMethod(id);
+    result.fold((l) {
+      errorMessage = l.error.message;
+      isLoading = false;
+      _safeNotify();
+    }, (r) {
+      getPaymentMethods();
+    });
+  }
+
 
 }
