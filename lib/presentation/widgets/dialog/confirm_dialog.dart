@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:unsub/presentation/navigation/navigation.dart';
 import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
@@ -33,12 +34,12 @@ Future<bool> showPlatformConfirmDialog(
         ),
         actions: [
           CupertinoDialogAction(
-            onPressed: () => context.pop(false),
+            onPressed: () => Navigation.pop(false),
             child: PrimaryText(cancelText, color: effectiveCancelColor),
           ),
           CupertinoDialogAction(
             isDestructiveAction: isDestructive,
-            onPressed: () => context.pop(true),
+            onPressed: () => Navigation.pop(true),
             child: PrimaryText(confirmText, color: effectiveConfirmColor),
           ),
         ],
@@ -60,11 +61,11 @@ Future<bool> showPlatformConfirmDialog(
         ),
         actions: [
           TextButton(
-            onPressed: () => context.pop(false),
+            onPressed: () => Navigation.pop(false),
             child: PrimaryText(cancelText, color: effectiveCancelColor),
           ),
           TextButton(
-            onPressed: () => context.pop(true),
+            onPressed: () => Navigation.pop(true),
             child: PrimaryText(confirmText, color: effectiveConfirmColor),
           ),
         ],

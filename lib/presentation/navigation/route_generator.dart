@@ -12,6 +12,7 @@ import 'package:unsub/presentation/ui/auth/onboarding/view/onboarding_page.dart'
 import 'package:unsub/presentation/ui/auth/registration/view/register/register_page.dart';
 import 'package:unsub/presentation/ui/home/view/home_page.dart';
 import 'package:unsub/presentation/ui/instructions/view/instructions_page.dart';
+import 'package:unsub/presentation/ui/payment/view/add_payment_page.dart';
 import 'package:unsub/presentation/ui/payment/view/payment_page.dart';
 import 'package:unsub/presentation/ui/profile/view/profile_page.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
@@ -39,6 +40,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return createPageRoute(const AddSubscriptionPage(), settings);
     case Routes.payment:
       return createPageRoute(const PaymentPage(), settings);
+    case Routes.addPayment:
+      return createPageRoute(const AddPaymentPage(), settings);
     default:
       return createPageRoute(
         const Scaffold(body: Center(child: Text('No route defined'))),
@@ -73,6 +76,8 @@ class RouteGenerator {
         return _push(AddSubscriptionPage());
       case Routes.payment:
         return _push(const PaymentPage());
+      case Routes.addPayment:
+        return _push(const AddPaymentPage());
       case Routes.none:
         return _errorRoute();
       default:

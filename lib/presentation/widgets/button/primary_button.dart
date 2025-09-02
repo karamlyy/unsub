@@ -5,7 +5,7 @@ import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String title;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool isDisabled;
   final bool isLoading;
 

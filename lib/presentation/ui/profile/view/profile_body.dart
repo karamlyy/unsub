@@ -47,8 +47,12 @@ class ProfileBody extends StatelessWidget {
                 letterSpacing: -0.4,
                 color: UIColor.textSecondary.withValues(alpha: 0.6),
               ),
-              SecondaryButton(title: "add template payment methods", onPressed: () => Navigation.push(Routes.payment)),
-              Spacer()
+              16.verticalSpace,
+              SecondaryButton(
+                title: "template payment methods",
+                onPressed: () => Navigation.push(Routes.payment),
+              ),
+              Spacer(),
             ],
           ],
         ),

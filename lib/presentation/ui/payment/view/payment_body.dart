@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:unsub/presentation/navigation/app_router.dart';
+import 'package:unsub/presentation/navigation/navigation.dart';
+import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/ui/payment/provider/payment_provider.dart';
 import 'package:unsub/presentation/widgets/button/primary_button.dart';
 import 'package:unsub/data/model/payment-methods/payment_methods_model.dart';
+import 'package:unsub/presentation/widgets/dialog/confirm_dialog.dart';
+import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
 class PaymentBody extends StatelessWidget {
   const PaymentBody({super.key});
@@ -11,164 +17,102 @@ class PaymentBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<PaymentProvider>();
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Payment Methods',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : provider.errorMessage != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.red[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Error',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Colors.red[600],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              provider.errorMessage!,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.red[500],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () => provider.getPaymentMethods(),
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      )
-                    : provider.paymentMethods.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.payment_outlined,
-                                  size: 64,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No payment methods yet',
-                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Add your first payment method to get started',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[500],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: provider.paymentMethods.length,
-                            itemBuilder: (context, index) {
-                              final paymentMethod = provider.paymentMethods[index];
-                              return Dismissible(
-                                key: Key(paymentMethod.id ?? index.toString()),
-                                direction: DismissDirection.endToStart,
-                                background: Container(
-                                  alignment: Alignment.centerRight,
-                                  padding: const EdgeInsets.only(right: 20.0),
-                                  color: Colors.red,
-                                  child: const Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                confirmDismiss: (direction) async {
-                                  return await _showDeleteConfirmationDialog(
-                                    context,
-                                    paymentMethod.label ?? 'Unknown',
-                                  );
-                                },
-                                onDismissed: (direction) {
-                                  if (paymentMethod.id != null) {
-                                    provider.deletePaymentMethod(paymentMethod.id!);
-                                  }
-                                },
-                                child: PaymentMethodCard(
-                                  paymentMethod: paymentMethod,
-                                ),
-                              );
-                            },
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PrimaryText('Payment Methods', fontSize: 20),
+            16.verticalSpace,
+            Expanded(
+              child: provider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : provider.errorMessage != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 64,
+                            color: UIColor.error,
                           ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: PrimaryButton(
+                          16.verticalSpace,
+                          PrimaryText('Error'),
+                          8.verticalSpace,
+                          PrimaryText(provider.errorMessage!),
+                          16.verticalSpace,
+                          ElevatedButton(
+                            onPressed: () => provider.getPaymentMethods(),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : provider.paymentMethods.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.payment_outlined,
+                            size: 64.sp,
+                            color: Colors.grey[400],
+                          ),
+                          16.verticalSpace,
+                          PrimaryText('No payment methods yet'),
+                          8.verticalSpace,
+                          PrimaryText(
+                            'Add your first payment method to get started',
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: provider.paymentMethods.length,
+                      itemBuilder: (context, index) {
+                        final paymentMethod = provider.paymentMethods[index];
+                        return PaymentMethodCard(
+                          paymentMethod: paymentMethod,
+                          onDelete: () async {
+                            final confirm = await showDeleteConfirmDialog(
+                              context,
+                            );
+                            if (confirm && paymentMethod.id != null) {
+                              provider.deletePaymentMethod(paymentMethod.id!);
+                            }
+                          },
+                        );
+                      },
+                    ),
+            ),
+            16.verticalSpace,
+            PrimaryButton(
               title: "Add New Payment Method",
-              onPressed: provider.addPaymentMethod,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<bool?> _showDeleteConfirmationDialog(
-    BuildContext context,
-    String paymentMethodName,
-  ) {
-    return showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Payment Method'),
-          content: Text(
-            'Are you sure you want to delete "$paymentMethodName"? This action cannot be undone.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
-              child: const Text('Delete'),
+              onPressed: () async {
+                final result = await Navigation.push(Routes.addPayment);
+                if (result == true) {
+                  provider.getPaymentMethods();
+                }
+              },
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
 class PaymentMethodCard extends StatelessWidget {
   final PaymentMethod paymentMethod;
+  final VoidCallback? onDelete;
 
-  const PaymentMethodCard({required this.paymentMethod});
+  const PaymentMethodCard({
+    super.key,
+    required this.paymentMethod,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +120,9 @@ class PaymentMethodCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(
+            context,
+          ).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             _getPaymentMethodIcon(paymentMethod.type),
             color: Theme.of(context).primaryColor,
@@ -190,23 +136,24 @@ class PaymentMethodCard extends StatelessWidget {
           paymentMethod.value ?? '',
           style: TextStyle(color: Colors.grey[600]),
         ),
-        trailing: paymentMethod.datumDefault == true
-            ? Container(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (paymentMethod.datumDefault == true)
+              Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'Default',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )
-            : null,
+                child: PrimaryText("default", fontSize: 13,),
+              ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: UIColor.error),
+              onPressed: onDelete,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -214,15 +161,8 @@ class PaymentMethodCard extends StatelessWidget {
   IconData _getPaymentMethodIcon(String? type) {
     switch (type?.toLowerCase()) {
       case 'card':
-      case 'credit':
-      case 'debit':
-        return Icons.credit_card;
       case 'cash':
         return Icons.money;
-      case 'bank':
-        return Icons.account_balance;
-      case 'paypal':
-        return Icons.payment;
       default:
         return Icons.payment;
     }
