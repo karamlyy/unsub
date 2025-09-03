@@ -68,8 +68,8 @@ class LoginProvider extends ChangeNotifier {
       notifyListeners();
     }, (r) async {
       await prefs.setAuthorizationPassed(true);
-      await prefs.setAccessToken(r.accessToken ?? "");
-      await prefs.setRefreshToken(r.refreshToken ?? "");
+      await prefs.setAccessToken(r.accessToken);
+      await prefs.setRefreshToken(r.refreshToken);
       _state = Success();
       notifyListeners();
     });

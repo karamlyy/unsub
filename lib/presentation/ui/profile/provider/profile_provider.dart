@@ -4,20 +4,6 @@ import 'package:unsub/app/view/di.dart';
 import 'package:unsub/data/repository/auth_repository.dart';
 import 'package:unsub/data/repository/payment_methods_repository.dart';
 
-class ProfileMenuItem {
-  final IconData icon;
-  final String title;
-  final String? routeName;
-  final void Function(BuildContext)? onTap;
-
-  const ProfileMenuItem({
-    required this.icon,
-    required this.title,
-    this.routeName,
-    this.onTap,
-  });
-}
-
 class ProfileProvider extends ChangeNotifier {
   final AuthRepository _authRepository = locator.get<AuthRepository>();
   final PaymentMethodsRepository _paymentMethodsRepository = locator.get<PaymentMethodsRepository>();

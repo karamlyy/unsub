@@ -14,4 +14,11 @@ class ApiRoutes {
   static const String paymentMethods = '$baseUrl/payment-methods';
   static const String types = '$baseUrl/payment-methods/types';
   static const String paymentMethodById = '$baseUrl/payment-methods';
+
+
+  //services
+  static const String services = '$baseUrl/services';
+
+  //categories
+  static const String categories = '$baseUrl/categories';
   }

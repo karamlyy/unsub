@@ -6,6 +6,8 @@ import 'package:unsub/data/model/payment-methods/card_brands_model.dart';
 import 'package:unsub/data/model/payment-methods/delete_payment_method_model.dart';
 import 'package:unsub/data/model/payment-methods/payment_methods_model.dart';
 import 'package:unsub/data/model/payment-methods/types_model.dart';
+import 'package:unsub/data/model/service/categories_model.dart';
+import 'package:unsub/data/model/service/services_model.dart';
 
 class ResponseModel<T> {
   final int? status;
@@ -42,6 +44,11 @@ class ResponseModel<T> {
           return AddPaymentMethodModel.fromJson(data) as T;
         case DeletePaymentMethodModel:
           return DeletePaymentMethodModel.fromJson(data) as T;
+
+        case ServicesModel:
+          return ServicesModel.fromJson(data) as T;
+        case CategoriesModel:
+          return CategoriesModel.fromJson(data) as T;
         default:
           return data as T;
       }

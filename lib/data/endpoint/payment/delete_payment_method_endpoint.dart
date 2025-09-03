@@ -12,7 +12,5 @@ class DeletePaymentMethodEndpoint extends Endpoint {
   @override
   HttpMethod get httpMethod => HttpMethod.delete;
 
-  @override
-  Map<String, dynamic>? get body => null;
 }
 
