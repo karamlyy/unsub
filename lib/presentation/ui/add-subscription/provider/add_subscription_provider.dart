@@ -1,95 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:unsub/app/view/di.dart';
+import 'package:unsub/data/model/service/categories_model.dart';
+import 'package:unsub/data/model/service/services_model.dart';
 import 'package:unsub/data/model/subscription_model.dart';
+import 'package:unsub/data/repository/services_repository.dart';
 
 class AddSubscriptionProvider extends ChangeNotifier {
-  final List<SubscriptionItem> _items = [];
+  final ServicesRepository _servicesRepository = locator.get<ServicesRepository>();
 
-  List<SubscriptionItem> get items => List.unmodifiable(_items);
 
-  void loadMock() {
-    if (_items.isNotEmpty) return;
-    _items.addAll([
-      SubscriptionItem(id: 1, title: 'Netflix',      logoAsset: 'assets/images/netflix.png',     category: SubscriptionCategory.video),
-      SubscriptionItem(id: 2, title: 'Youtube',      logoAsset: 'assets/images/youtube.png',     category: SubscriptionCategory.video,   isSelected: true),
-      SubscriptionItem(id: 3, title: 'Apple Music',  logoAsset: 'assets/images/appleMusic.png',  category: SubscriptionCategory.music,   isSelected: true),
-      SubscriptionItem(id: 4, title: 'Spotify',      logoAsset: 'assets/images/spotify.png',     category: SubscriptionCategory.music),
-      SubscriptionItem(id: 5, title: 'Telegram',     logoAsset: 'assets/images/telegram.png',    category: SubscriptionCategory.messenger),
-      SubscriptionItem(id: 6, title: 'Roblox',       logoAsset: 'assets/images/roblox.png',      category: SubscriptionCategory.game),
-      SubscriptionItem(id: 7, title: 'Kinopoisk',    logoAsset: 'assets/images/kinopoisk.png',   category: SubscriptionCategory.video),
-      SubscriptionItem(id: 8, title: 'VKontakte',    logoAsset: 'assets/images/vkontakt.png',    category: SubscriptionCategory.messenger),
-      SubscriptionItem(id: 9, title: 'ChatGPT',      logoAsset: 'assets/images/openai.png',      category: SubscriptionCategory.ai),
-    ]);
+
+  List<ServiceModel> services = [];
+  List<Category> categories = [];
+  bool isLoading = true;
+  String? errorMessage;
+
+  String? searchQuery;
+  void updateSearchQuery(String? query) {
+    searchQuery = query;
+    _safeNotify();
+  }
+
+  String? _selectedCategoryId;
+  String? get selectedCategoryId => _selectedCategoryId;
+
+  void selectCategory(String? id) {
+    _selectedCategoryId = id;
+    _safeNotify();
+  }
+
+  List<Service> get filteredServices {
+    final flat = services.expand((g) => g.services ?? const <Service>[]).toList();
+    if (_selectedCategoryId == null) return flat;
+    return services
+        .where((g) => g.categoryId == _selectedCategoryId)
+        .expand((g) => g.services ?? const <Service>[])
+        .toList();
+  }
+
+  // Selected service state
+  Service? _selectedService;
+  Service? get selectedService => _selectedService;
+
+  void selectService(Service? service) {
+    _selectedService = service;
+    _safeNotify();
+  }
+
+
+  bool _isDisposed = false;
+  AddSubscriptionProvider() {
+    getCategories();
+    getServices();
+  }
+
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  void _safeNotify() {
+    if (_isDisposed) return;
     notifyListeners();
   }
 
-  String _query = '';
-  void updateQuery(String value) {
-    _query = value;
-    notifyListeners();
+  Future<void> getServices() async {
+    isLoading = true;
+    _safeNotify();
+    final result = await _servicesRepository.getServices();
+    result.fold(
+      (l) {
+        errorMessage = l.error.message;
+        isLoading = false;
+        _safeNotify();
+      },
+      (r) {
+        services = r.data ?? [];
+        isLoading = false;
+        _safeNotify();
+      },
+    );
   }
 
-  SubscriptionCategory? _selectedCategory;
-  SubscriptionCategory? get selectedCategory => _selectedCategory;
 
-  void setCategory(SubscriptionCategory? category) {
-    _selectedCategory = category;
-    notifyListeners();
+  Future<void> getCategories() async {
+    isLoading = true;
+    _safeNotify();
+    final result = await _servicesRepository.getCategories();
+    result.fold(
+      (l) {
+        errorMessage = l.error.message;
+        isLoading = false;
+        _safeNotify();
+      },
+      (r) {
+        categories = r.data ?? [];
+        isLoading = false;
+        _safeNotify();
+      },
+    );
   }
 
-  List<SubscriptionItem> get subscriptions {
-    Iterable<SubscriptionItem> list = _items;
 
-    if (_selectedCategory != null) {
-      list = list.where((e) => e.category == _selectedCategory);
-    }
-
-    if (_query.isNotEmpty) {
-      final q = _query.toLowerCase();
-      list = list.where((e) => e.title.toLowerCase().contains(q));
-    }
-
-    return List.unmodifiable(list);
-  }
-
-  List<int> get selectedIds =>
-      _items.where((e) => e.isSelected).map((e) => e.id).toList();
-
-  List<SubscriptionItem> get selectedSubscriptions =>
-      _items.where((e) => e.isSelected).toList();
-
-  int get selectedCount => selectedIds.length;
-
-  bool get hasAnySelected => selectedCount > 0;
-
-  void toggleSubscription(int id) {
-    final i = _items.indexWhere((e) => e.id == id);
-    if (i == -1) return;
-    final current = _items[i];
-    _items[i] = current.copyWith(isSelected: !current.isSelected);
-    notifyListeners();
-  }
 }
 
-class SubscriptionItem {
-  final int id;
-  final String title;
-  final String logoAsset;
-  final bool isSelected;
-  final SubscriptionCategory category;
-
-  const SubscriptionItem({
-    required this.id,
-    required this.title,
-    required this.logoAsset,
-    this.isSelected = false,
-    this.category = SubscriptionCategory.other,
-  });
-
-  SubscriptionItem copyWith({bool? isSelected}) => SubscriptionItem(
-    id: id,
-    title: title,
-    logoAsset: logoAsset,
-    isSelected: isSelected ?? this.isSelected,
-    category: category,
-  );
-}

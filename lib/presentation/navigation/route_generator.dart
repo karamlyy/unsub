@@ -38,6 +38,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return createPageRoute(const ProfilePage(), settings);
     case Routes.addSubscription:
       return createPageRoute(const AddSubscriptionPage(), settings);
+    case Routes.addSubscriptionDetails:
+      return createPageRoute(const AddSubscriptionDetailPage(), settings);
     case Routes.payment:
       return createPageRoute(const PaymentPage(), settings);
     case Routes.addPayment:
@@ -74,6 +76,8 @@ class RouteGenerator {
         return _push(const ProfilePage());
       case Routes.addSubscription:
         return _push(AddSubscriptionPage());
+      case Routes.addSubscriptionDetails:
+        return _push(const AddSubscriptionDetailPage());
       case Routes.payment:
         return _push(const PaymentPage());
       case Routes.addPayment:

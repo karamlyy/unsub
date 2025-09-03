@@ -4,7 +4,6 @@ import 'package:unsub/data/endpoint/payment/add_payment_method_endpoint.dart';
 import 'package:unsub/data/model/payment-methods/card_brands_model.dart';
 import 'package:unsub/data/repository/payment_methods_repository.dart';
 import 'package:unsub/data/model/payment-methods/payment_methods_model.dart';
-import 'package:unsub/presentation/navigation/navigation.dart';
 
 class PaymentProvider extends ChangeNotifier {
   final PaymentMethodsRepository _paymentMethodsRepository = locator.get<PaymentMethodsRepository>();
@@ -41,10 +40,7 @@ class PaymentProvider extends ChangeNotifier {
     }
 
     cardBrandController.text = value;
-    final matched = cardBrands.firstWhere(
-          (b) => b.label == value || b.type == value,
-      orElse: () => CardBrandModel(),
-    );
+    final matched = cardBrands.firstWhere((b) => b.label == value || b.type == value, orElse: () => CardBrandModel(),);
     setCardBrandId(matched.id);
     _safeNotify();
   }

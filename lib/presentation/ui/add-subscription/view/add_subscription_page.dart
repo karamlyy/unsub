@@ -24,7 +24,7 @@ class AddSubscriptionPage extends StatelessWidget {
 
       ),
       body: ChangeNotifierProvider(
-        create: (context) => AddSubscriptionProvider()..loadMock(),
+        create: (context) => AddSubscriptionProvider(),
         child: AddSubscriptionBody(),
       ),
     );
