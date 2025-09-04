@@ -39,7 +39,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case Routes.addSubscription:
       return createPageRoute(const AddSubscriptionPage(), settings);
     case Routes.addSubscriptionDetails:
-      return createPageRoute(const AddSubscriptionDetailPage(), settings);
+      return createPageRoute(AddSubscriptionDetailPage(arguments: settings.arguments as Map<String, dynamic>?), settings);
     case Routes.payment:
       return createPageRoute(const PaymentPage(), settings);
     case Routes.addPayment:
@@ -77,7 +77,7 @@ class RouteGenerator {
       case Routes.addSubscription:
         return _push(AddSubscriptionPage());
       case Routes.addSubscriptionDetails:
-        return _push(const AddSubscriptionDetailPage());
+        return _push(AddSubscriptionDetailPage(arguments: args as Map<String, dynamic>?));
       case Routes.payment:
         return _push(const PaymentPage());
       case Routes.addPayment:

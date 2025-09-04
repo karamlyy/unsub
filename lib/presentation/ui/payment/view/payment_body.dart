@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:unsub/presentation/navigation/app_router.dart';
 import 'package:unsub/presentation/navigation/navigation.dart';
 import 'package:unsub/presentation/shared/color.dart';
@@ -27,7 +28,12 @@ class PaymentBody extends StatelessWidget {
             16.verticalSpace,
             Expanded(
               child: provider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? ListView.builder(
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        return const _PaymentMethodCardSkeleton();
+                      },
+                    )
                   : provider.errorMessage != null
                   ? Center(
                       child: Column(
@@ -166,5 +172,63 @@ class PaymentMethodCard extends StatelessWidget {
       default:
         return Icons.payment;
     }
+  }
+}
+
+class _PaymentMethodCardSkeleton extends StatelessWidget {
+  const _PaymentMethodCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Shimmer.fromColors(
+        baseColor: Colors.white.withValues(alpha: 0.06),
+        highlightColor: Colors.white.withValues(alpha: 0.12),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Colors.white10,
+          ),
+          title: Container(
+            height: 16.h,
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+          subtitle: Container(
+            height: 14.h,
+            width: 120.w,
+            margin: EdgeInsets.only(top: 4.h),
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(7.r),
+            ),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 60.w,
+                height: 24.h,
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+              8.horizontalSpace,
+              Container(
+                width: 24.w,
+                height: 24.w,
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
