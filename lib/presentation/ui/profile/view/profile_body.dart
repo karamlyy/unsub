@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:unsub/presentation/navigation/app_router.dart';
 import 'package:unsub/presentation/navigation/navigation.dart';
 import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/ui/profile/provider/profile_provider.dart';
-import 'package:unsub/presentation/widgets/button/primary_button.dart';
 import 'package:unsub/presentation/widgets/button/secondary_button.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
-import 'package:unsub/presentation/widgets/indicator/loading_indicator.dart';
 
 class ProfileBody extends StatelessWidget {
   const ProfileBody({super.key});
@@ -24,7 +23,7 @@ class ProfileBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (provider.isLoading) const LoadingIndicator(),
+            if (provider.isLoading) const _ProfileSkeleton(),
             if (provider.errorMessage != null && !provider.isLoading)
               PrimaryText(provider.errorMessage!, color: UIColor.error),
             if (!provider.isLoading) ...[
@@ -57,6 +56,59 @@ class ProfileBody extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ProfileSkeleton extends StatelessWidget {
+  const _ProfileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Shimmer.fromColors(
+          baseColor: Colors.white.withValues(alpha: 0.06),
+          highlightColor: Colors.white.withValues(alpha: 0.12),
+          child: Container(
+            width: 68.r,
+            height: 68.r,
+            decoration: const BoxDecoration(
+              color: Colors.white10,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        24.verticalSpace,
+        Shimmer.fromColors(
+          baseColor: Colors.white.withValues(alpha: 0.06),
+          highlightColor: Colors.white.withValues(alpha: 0.12),
+          child: Container(
+            width: 160.w,
+            height: 16.h,
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+        ),
+        16.verticalSpace,
+        Shimmer.fromColors(
+          baseColor: Colors.white.withValues(alpha: 0.06),
+          highlightColor: Colors.white.withValues(alpha: 0.12),
+          child: Container(
+            width: 220.w,
+            height: 44.h,
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ),
+        ),
+        const Spacer(),
+      ],
     );
   }
 }

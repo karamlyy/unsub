@@ -1,17 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:unsub/presentation/shared/color.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
 class ServiceTile extends StatelessWidget {
   final String title;
   final String logoUrl;
   final VoidCallback onTap;
+  final bool isSelected;
 
   const ServiceTile({
     required this.title,
     required this.logoUrl,
     required this.onTap,
+    this.isSelected = false,
   });
 
   @override
@@ -21,11 +24,15 @@ class ServiceTile extends StatelessWidget {
       onTap: onTap,
       child: Ink(
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: Colors.white10),
+          border: Border.all(
+            color: isSelected ? UIColor.primary : Colors.white10,
+            width: isSelected ? 2 : 1,
+          ),
         ),
-        child: Padding(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
           padding: EdgeInsets.all(10.w),
           child: Row(
             children: [
@@ -49,6 +56,7 @@ class ServiceTile extends StatelessWidget {
                 child: PrimaryText(
                   title,
                   fontWeight: FontWeight.w600,
+                  color: isSelected ? UIColor.primary : Colors.white,
                 ),
               ),
               Icon(CupertinoIcons.chevron_forward, size: 18, color: Colors.white60),

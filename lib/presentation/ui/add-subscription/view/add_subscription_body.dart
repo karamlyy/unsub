@@ -229,17 +229,13 @@ class AddSubscriptionBody extends StatelessWidget {
                               separatorBuilder: (_, __) => 8.verticalSpace,
                               itemBuilder: (context, index) {
                                 final s = filtered[index];
+                                final isSelected = provider.selectedService?.id == s.id;
                                 return ServiceTile(
                                   title: s.label ?? '',
                                   logoUrl: s.logo ?? '',
+                                  isSelected: isSelected,
                                   onTap: () {
                                     provider.selectService(s);
-                                    Navigation.push(
-                                      Routes.addSubscriptionDetails,
-                                      arguments: {
-                                        'selectedService': s.toJson(),
-                                      },
-                                    );
                                   },
                                 );
                               },
@@ -250,17 +246,38 @@ class AddSubscriptionBody extends StatelessWidget {
               ),
             ),
             16.verticalSpace,
-            PrimaryButton(
-              title: "Next",
-              onPressed: () {
-                final selected = provider.selectedService;
-                if (selected != null) {
-                  Navigation.push(
-                    Routes.addSubscriptionDetails,
-                    arguments: {'selectedService': selected.toJson()},
-                  );
-                }
-              },
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: PrimaryButton(
+                title: "Next",
+                onPressed: () {
+                  final selected = provider.selectedService;
+                  if (selected != null) {
+                    Navigation.push(
+                      Routes.addSubscriptionDetails,
+                      arguments: {'selectedService': selected.toJson()},
+                    );
+                  }
+                },
+                isDisabled: provider.selectedService == null,
+              ),
+            ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: provider.selectedService == null
+                  ? Padding(
+                      padding: EdgeInsets.only(top: 8.h),
+                      child: Center(
+                        child: PrimaryText(
+                          "Please select a service to continue",
+                          fontSize: 14,
+                          color: Colors.white60,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         ),
