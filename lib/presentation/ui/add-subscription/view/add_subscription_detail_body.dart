@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:unsub/data/model/service/services_model.dart';
 import 'package:unsub/presentation/shared/color.dart';
-import 'package:unsub/presentation/ui/add-subscription/provider/add_subscription_provider.dart';
 import 'package:unsub/presentation/widgets/text/primary_text.dart';
 
 class AddSubscriptionDetailBody extends StatelessWidget {
@@ -194,4 +192,5 @@ class AddSubscriptionDetailBody extends StatelessWidget {
     );
   }
 }
+
 

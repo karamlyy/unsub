@@ -99,6 +99,7 @@ class SelectedSubscriptionProvider extends RegisterProvider {
     );
   }
 
+  @override
   Future<SelectedSubscriptionForm> submit() async {
     if (!isValid) {
       throw Exception('Form is not valid');

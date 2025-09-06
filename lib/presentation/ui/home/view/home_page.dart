@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:unsub/presentation/navigation/app_router.dart';
 import 'package:unsub/presentation/navigation/navigation.dart';
@@ -29,7 +28,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: ChangeNotifierProvider(
-        create: (context) => HomeProvider()..loadMock(),
+        create: (context) => HomeProvider(),
         child: HomeBody(),
       ),
     );

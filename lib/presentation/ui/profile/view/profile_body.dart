@@ -21,6 +21,7 @@ class ProfileBody extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (provider.isLoading) const _ProfileSkeleton(),
@@ -107,7 +108,7 @@ class _ProfileSkeleton extends StatelessWidget {
             ),
           ),
         ),
-        const Spacer(),
+        40.verticalSpace,
       ],
     );
   }

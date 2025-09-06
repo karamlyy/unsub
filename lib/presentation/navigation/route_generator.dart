@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:unsub/presentation/navigation/app_router.dart';
 import 'package:unsub/presentation/ui/add-subscription/view/add_subscription_detail_page.dart';
 import 'package:unsub/presentation/ui/add-subscription/view/add_subscription_page.dart';

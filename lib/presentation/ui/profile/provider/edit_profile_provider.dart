@@ -20,7 +20,5 @@ class EditProfileProvider extends ChangeNotifier{
     name = name;
     username = username;
     notifyListeners();
-
-    print("Profile saved: Name - $name, Username - $username");
   }
 }

@@ -21,4 +21,10 @@ class ApiRoutes {
 
   //categories
   static const String categories = '$baseUrl/categories';
+
+  //currencies
+  static const String currencies = '$baseUrl/currencies';
+
+  //subscriptions
+  static const String subscriptions = '$baseUrl/subscriptions';
   }

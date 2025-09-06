@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:unsub/app/view/di.dart';
 import 'package:unsub/data/model/service/categories_model.dart';
 import 'package:unsub/data/model/service/services_model.dart';
-import 'package:unsub/data/model/subscription_model.dart';
 import 'package:unsub/data/repository/services_repository.dart';
 
 class AddSubscriptionProvider extends ChangeNotifier {

@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
 import 'package:unsub/app/view/di.dart';
 import 'package:unsub/data/repository/auth_repository.dart';
 import 'package:unsub/data/repository/payment_methods_repository.dart';
@@ -57,7 +56,6 @@ class ProfileProvider extends ChangeNotifier {
       isLoading = false;
       _safeNotify();
     }, (r) {
-      print(r.data);
       isLoading = false;
       _safeNotify();
     });
@@ -73,7 +71,6 @@ class ProfileProvider extends ChangeNotifier {
       isLoading = false;
       _safeNotify();
     }, (r) {
-      print(r.data);
       isLoading = false;
       _safeNotify();
     });
@@ -89,15 +86,8 @@ class ProfileProvider extends ChangeNotifier {
       isLoading = false;
       _safeNotify();
     }, (r) {
-      print(r.data);
       isLoading = false;
       _safeNotify();
     });
-  }
-
-
-
-  void logout() {
-    print("User logged out");
   }
 }

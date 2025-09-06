@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart'; // ➜ add this
 import 'package:unsub/presentation/navigation/app_router.dart';
 import 'package:unsub/presentation/navigation/navigation.dart';
 import 'package:unsub/presentation/shared/color.dart';
@@ -19,7 +20,8 @@ class HomeBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<HomeProvider>();
-    final items = provider.items;
+    final items = provider.subscriptions;
+    final isLoading = (provider as dynamic).isLoading == true; // assumes you expose isLoading
 
     return SafeArea(
       child: Padding(
@@ -27,7 +29,7 @@ class HomeBody extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PrimaryText(
+            const PrimaryText(
               "My subscriptions",
               fontSize: 30,
               fontWeight: FontWeight.w700,
@@ -35,53 +37,60 @@ class HomeBody extends StatelessWidget {
             ),
             16.verticalSpace,
 
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24.r),
-                color: UIColor.textfieldBackground,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PrimaryText(
-                    "Average consumption",
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  4.verticalSpace,
-                  Row(
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: UIColor.grayDark,
+            // ===== Summary card / skeleton =====
+            if (isLoading)
+              const _SummarySkeleton()
+            else
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24.r),
+                  color: UIColor.textfieldBackground,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const PrimaryText(
+                      "Average consumption",
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    4.verticalSpace,
+                    Row(
+                      children: [
+                        Container(
+                          width: 40.w,
+                          height: 40.w,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: UIColor.grayDark,
+                          ),
+                          child: SvgPicture.asset("assets/icons/dollar.svg"),
                         ),
-                        child: SvgPicture.asset("assets/icons/dollar.svg"),
-                      ),
-                      10.horizontalSpace,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          PrimaryText(
-                            '${provider.sumOfPrices()}\$',
-                            fontSize: 17,
-                          ),
-                          PrimaryText(
-                            "${items.length} active subscriptions",
-                            color: UIColor.textSecondary.withValues(alpha: 0.5),
-                            fontSize: 14,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                        10.horizontalSpace,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PrimaryText(
+                              '${provider.sumOfPrices()}\$',
+                              fontSize: 17,
+                            ),
+                            PrimaryText(
+                              "${items.length} active subscriptions",
+                              color: UIColor.textSecondary.withValues(alpha: 0.5),
+                              fontSize: 14,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
+
             12.verticalSpace,
+
+            // ===== List / skeleton =====
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -94,14 +103,17 @@ class HomeBody extends StatelessWidget {
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: PrimaryText(
+                      child: const PrimaryText(
                         "Active subscriptions",
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     4.verticalSpace,
-                    if (items.isEmpty)
+
+                    if (isLoading)
+                      const Expanded(child: _ListSkeleton(itemCount: 6))
+                    else if (items.isEmpty)
                       Expanded(
                         child: Center(
                           child: PrimaryText(
@@ -129,10 +141,11 @@ class HomeBody extends StatelessWidget {
                                 ),
                               ),
                               confirmDismiss: (direction) async {
+                                String label = sub.service?.label ?? sub.customLabel;
                                 return await showPlatformConfirmDialog(
                                   context,
                                   title: 'Delete?',
-                                  message: 'Remove ${sub.name} subscription?',
+                                  message: 'Remove $label subscription?',
                                   confirmText: 'Delete',
                                   cancelText: 'Cancel',
                                   isDestructive: true,
@@ -146,21 +159,21 @@ class HomeBody extends StatelessWidget {
                                   vertical: 4.h,
                                 ),
                                 leading: ClipOval(
-                                  child: Image.asset(
-                                    sub.imageAsset,
+                                  child: Image.network(
+                                    sub.service?.logo ?? sub.customLogo,
                                     fit: BoxFit.cover,
                                     width: 44.w,
                                     height: 44.w,
                                   ),
                                 ),
                                 title: PrimaryText(
-                                  sub.name,
+                                  sub.service?.label ?? sub.customLabel,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500,
                                   color: UIColor.textPrimary,
                                 ),
                                 subtitle: PrimaryText(
-                                  sub.category.name,
+                                  sub.paymentMethod?.label ?? "",
                                   fontSize: 14,
                                   color: Colors.white70,
                                 ),
@@ -176,7 +189,7 @@ class HomeBody extends StatelessWidget {
                                     ),
                                     PrimaryText(
                                       AppDateFormatter.monthDay(
-                                        sub.nextBilling,
+                                        sub.nextPaymentDate ?? DateTime.now(),
                                       ),
                                       fontSize: 14,
                                       color: provider.isExpiringSoon(sub)
@@ -194,12 +207,139 @@ class HomeBody extends StatelessWidget {
                 ),
               ),
             ),
+
             12.verticalSpace,
             PrimaryButton(
               title: "Add New",
               onPressed: () => Navigation.push(Routes.addSubscription),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ===== Reusable shimmer pieces =====
+
+class _SummarySkeleton extends StatelessWidget {
+  const _SummarySkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24.r),
+        color: UIColor.textfieldBackground,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ShimmerBar(width: 180.w, height: 18.h, radius: 6.r),
+          12.verticalSpace,
+          Row(
+            children: [
+              _ShimmerCircle(size: 40.w),
+              10.horizontalSpace,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _ShimmerBar(width: 90.w, height: 16.h, radius: 6.r),
+                  6.verticalSpace,
+                  _ShimmerBar(width: 140.w, height: 12.h, radius: 6.r),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ListSkeleton extends StatelessWidget {
+  final int itemCount;
+  const _ListSkeleton({this.itemCount = 6});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: itemCount,
+      padding: EdgeInsets.only(top: 4.h, bottom: 8.h),
+      separatorBuilder: (_, __) => 4.verticalSpace,
+      itemBuilder: (_, __) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: Row(
+            children: [
+              _ShimmerCircle(size: 44.w),
+              12.horizontalSpace,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _ShimmerBar(width: double.infinity, height: 16.h, radius: 6.r),
+                    6.verticalSpace,
+                    _ShimmerBar(width: 120.w, height: 12.h, radius: 6.r),
+                  ],
+                ),
+              ),
+              12.horizontalSpace,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _ShimmerBar(width: 48.w, height: 16.h, radius: 6.r),
+                  6.verticalSpace,
+                  _ShimmerBar(width: 64.w, height: 12.h, radius: 6.r),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ShimmerBar extends StatelessWidget {
+  final double width;
+  final double height;
+  final double radius;
+  const _ShimmerBar({required this.width, required this.height, this.radius = 8});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: UIColor.grayDark.withValues(alpha: 0.35),
+      highlightColor: Colors.white.withValues(alpha: 0.15),
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: UIColor.grayDark,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      ),
+    );
+  }
+}
+
+class _ShimmerCircle extends StatelessWidget {
+  final double size;
+  const _ShimmerCircle({required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: UIColor.grayDark.withValues(alpha: 0.35),
+      highlightColor: Colors.white.withValues(alpha: 0.15),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: UIColor.grayDark,
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:unsub/data/model/auth/login_model.dart';
 import 'package:unsub/data/model/auth/register_model.dart';
 import 'package:unsub/data/model/auth/me_model.dart';
+import 'package:unsub/data/model/currency/currencies_model.dart';
 import 'package:unsub/data/model/payment-methods/add_payment_method_model.dart';
 import 'package:unsub/data/model/payment-methods/card_brands_model.dart';
 import 'package:unsub/data/model/payment-methods/delete_payment_method_model.dart';
@@ -8,6 +9,7 @@ import 'package:unsub/data/model/payment-methods/payment_methods_model.dart';
 import 'package:unsub/data/model/payment-methods/types_model.dart';
 import 'package:unsub/data/model/service/categories_model.dart';
 import 'package:unsub/data/model/service/services_model.dart';
+import 'package:unsub/data/model/subscription/subscriptions_model.dart';
 
 class ResponseModel<T> {
   final int? status;
@@ -28,27 +30,31 @@ class ResponseModel<T> {
       if (data == null) return null;
 
       switch (T) {
-        case LoginModel:
+        case const (LoginModel):
           return LoginModel.fromJson(data) as T;
-        case RegisterModel:
+        case const (RegisterModel):
           return RegisterModel.fromJson(data) as T;
-        case MeModel:
+        case const (MeModel):
           return MeModel.fromJson(data) as T;
-        case CardBrandsModel:
+        case const (CardBrandsModel):
           return CardBrandsModel.fromJson(data) as T;
-        case TypesModel:
+        case const (TypesModel):
           return TypesModel.fromJson(data) as T;
-        case PaymentMethodsModel:
+        case const (PaymentMethodsModel):
           return PaymentMethodsModel.fromJson(data) as T;
-        case AddPaymentMethodModel:
+        case const (AddPaymentMethodModel):
           return AddPaymentMethodModel.fromJson(data) as T;
-        case DeletePaymentMethodModel:
+        case const (DeletePaymentMethodModel):
           return DeletePaymentMethodModel.fromJson(data) as T;
 
-        case ServicesModel:
+        case const (ServicesModel):
           return ServicesModel.fromJson(data) as T;
-        case CategoriesModel:
+        case const (CategoriesModel):
           return CategoriesModel.fromJson(data) as T;
+        case const (CurrenciesModel):
+          return CurrenciesModel.fromJson(data) as T;
+        case const (SubscriptionsModel):
+          return SubscriptionsModel.fromJson(data) as T;
         default:
           return data as T;
       }

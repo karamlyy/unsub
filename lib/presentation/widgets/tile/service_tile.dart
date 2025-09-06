@@ -10,7 +10,7 @@ class ServiceTile extends StatelessWidget {
   final VoidCallback onTap;
   final bool isSelected;
 
-  const ServiceTile({
+  const ServiceTile({super.key,
     required this.title,
     required this.logoUrl,
     required this.onTap,

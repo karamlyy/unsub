@@ -130,7 +130,6 @@ class SelectedSubscriptionBody extends StatelessWidget {
               onPressed: () async {
                 try {
                   final form = await provider.submit();
-                  context.goNamed('home');
                   debugPrint(
                     'Saved: ${form.description} | ${form.amount} | ${form.billingCycle.label} | ${form.firstPaymentDate} | email=${form.emailNotifications} push=${form.pushNotifications}',
                   );
