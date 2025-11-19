@@ -17,7 +17,21 @@ class ProfileRemoteDataSource {
 
     return BaseResponse.fromJson(
       response.data!,
-          (json) => UserModel.fromJson(json as Map<String, dynamic>),
+      (json) => UserModel.fromJson(json as Map<String, dynamic>),
+    );
+  }
+
+  Future<BaseResponse<void>> updateFcmToken(String fcmToken) async {
+    final response = await _client.patch<Map<String, dynamic>>(
+      ApiEndpoints.updateFcmToken,
+      data: {
+        'fcmToken': fcmToken,
+      },
+    );
+
+    return BaseResponse.fromJson(
+      response.data!,
+      (_) {},
     );
   }
 }

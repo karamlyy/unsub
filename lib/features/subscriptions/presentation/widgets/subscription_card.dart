@@ -37,7 +37,7 @@ class SubscriptionCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: surface.withOpacity(0.96),
+          color: surface.withValues(alpha: 0.96),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: border),
           boxShadow: const [
@@ -238,7 +238,7 @@ class _StatusBadge extends StatelessWidget {
         color: bg,
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
-          color: color.withOpacity(0.4),
+          color: color.withValues(alpha: 0.4),
           width: 0.7,
         ),
       ),
@@ -274,12 +274,12 @@ class _AvatarCircle extends StatelessWidget {
         gradient: LinearGradient(
           colors: [
             color,
-            color.withOpacity(0.7),
+            color.withValues(alpha: 0.7),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.35),
+            color: color.withValues(alpha: 0.35),
             blurRadius: 18,
             spreadRadius: 2,
             offset: const Offset(0, 8),

@@ -89,7 +89,7 @@ class _ProfileView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: surface.withOpacity(0.96),
+                      color: surface.withValues(alpha: 0.96),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: border),
                       boxShadow: const [
@@ -116,7 +116,7 @@ class _ProfileView extends StatelessWidget {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: accent.withOpacity(0.45),
+                                color: accent.withValues(alpha: 0.45),
                                 blurRadius: 24,
                                 spreadRadius: 2,
                                 offset: const Offset(0, 10),
@@ -241,7 +241,7 @@ class _ProfileTile extends StatelessWidget {
       child: Ink(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: surface.withOpacity(0.96),
+          color: surface.withValues(alpha: 0.96),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: border),
         ),

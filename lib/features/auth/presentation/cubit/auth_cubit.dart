@@ -1,5 +1,6 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unsub/features/auth/data/models/auth_response_model.dart';
 import 'package:unsub/features/auth/data/repositories/auth_repository.dart';
 
@@ -63,6 +64,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> logout() async {
+    // FCM token-i cihaz səviyyəsində də sil ki, bu token-lə daha bildiriş gəlməsin
+    try {
+      await FirebaseMessaging.instance.deleteToken();
+    } catch (_) {
+      // Əgər hansısa səbəbdən alınmasa, yenə də logout davam etməlidir
+    }
+
     await _authRepository.logout();
     emit(const Unauthenticated());
   }

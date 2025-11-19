@@ -29,4 +29,22 @@ class ProfileRepository {
       );
     }
   }
+
+  Future<Either<Failure, Unit>> updateFcmToken(String fcmToken) async {
+    try {
+      final res = await _remote.updateFcmToken(fcmToken);
+
+      if (!res.success) {
+        return left(ServerFailure(res.message));
+      }
+
+      return right(unit);
+    } on DioException catch (e) {
+      return left(mapDioErrorToFailure(e));
+    } catch (_) {
+      return left(
+        UnexpectedFailure('FCM token göndərilərkən xəta baş verdi'),
+      );
+    }
+  }
 }

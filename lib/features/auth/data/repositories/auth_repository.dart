@@ -70,7 +70,13 @@ class AuthRepository {
     }
   }
 
-  Future<void> logout() => _secureStorage.clearTokens();
+  Future<void> logout() async {
+    // Backend-də user-in FCM tokenini təmizlə
+    await _remote.clearFcmToken();
+
+    // Lokal access/refresh tokenləri sil
+    await _secureStorage.clearTokens();
+  }
 
   Future<bool> hasTokens() async {
     final token = await _secureStorage.getAccessToken();

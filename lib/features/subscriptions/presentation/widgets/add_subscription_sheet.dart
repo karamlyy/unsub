@@ -137,7 +137,7 @@ class _AddSubscriptionSheetState extends State<AddSubscriptionSheet> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
-        color: Colors.black.withOpacity(0.4), // yarı şəffaf overlay
+        color: Colors.black.withValues(alpha: 0.4), // yarı şəffaf overlay
         child: DraggableScrollableSheet(
           initialChildSize: 0.65,
           minChildSize: 0.45,
@@ -285,7 +285,7 @@ class _AddSubscriptionSheetState extends State<AddSubscriptionSheet> {
                         const _DarkLabel(text: 'Aktiv olsun'),
                         Switch(
                           value: _isActive,
-                          activeColor: const Color(0xFF22C55E),
+                          activeThumbColor: const Color(0xFF22C55E),
                           onChanged: (val) {
                             setState(() {
                               _isActive = val;
@@ -386,7 +386,7 @@ class _BillingCycleDropdown extends StatelessWidget {
     ];
 
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       items: items,
       onChanged: onChanged,
       dropdownColor: const Color(0xFF020617),

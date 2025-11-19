@@ -13,5 +13,7 @@ class ApiEndpoints {
   // Users
   static const String me = '/users/me';
 
+  static const String updateFcmToken = '/users/me/fcm-token';
+
   static const String smartCancelHelp = '/ai/cancel-help';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:unsub/features/ai/data/repositories/ai_repository.dart';
 import 'package:unsub/features/profile/data/repositories/profile_repository.dart';
 import 'app.dart';
@@ -12,6 +14,9 @@ import 'features/subscriptions/presentation/cubit/subscriptions_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+  await FirebaseMessaging.instance.requestPermission();
 
   final secureStorage = SecureStorage();
   final apiClient = ApiClient(secureStorage: secureStorage);

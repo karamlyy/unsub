@@ -52,4 +52,15 @@ class AuthRemoteDataSource {
       (json) => AuthPayload.fromJson(json! as Map<String, dynamic>),
     );
   }
+
+  Future<void> clearFcmToken() async {
+    try {
+      await _client.patch<Map<String, dynamic>>(
+        ApiEndpoints.updateFcmToken,
+        data: {'fcmToken': ''},
+      );
+    } catch (_) {
+      // logout zamanı bu çağırış uğursuz olsa da app davam etməlidir
+    }
+  }
 }

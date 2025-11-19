@@ -96,6 +96,6 @@ class SubscriptionsRemoteDataSource {
       ApiEndpoints.subscriptionById(id),
     );
 
-    return BaseResponse.fromJson(response.data!, (_) => null);
+    return BaseResponse.fromJson(response.data!, (_) {});
   }
 }

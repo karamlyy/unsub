@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:unsub/features/subscriptions/presentation/cubit/subscriptions_cubit.dart';
 import 'router/app_router.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/profile/data/repositories/profile_repository.dart';
 
 class UnsubApp extends StatelessWidget {
   const UnsubApp({super.key});
@@ -95,6 +97,9 @@ class UnsubApp extends StatelessWidget {
               // Yeni user login olduqda köhnə state-dən qurtul
               subsCubit.reset();
 
+              // Login (və ya app açılıb artıq login-dirsə) → FCM tokeni backend-ə göndər
+              _setupFirebaseMessaging(context);
+
               navigator.pushNamedAndRemoveUntil(
                 '/subscriptions',
                     (route) => false,
@@ -113,5 +118,30 @@ class UnsubApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _setupFirebaseMessaging(BuildContext context) async {
+    final messaging = FirebaseMessaging.instance;
+
+    final token = await messaging.getToken();
+    if (token != null) {
+      await _sendTokenToBackend(context, token);
+    }
+
+    messaging.onTokenRefresh.listen((newToken) {
+      _sendTokenToBackend(context, newToken);
+    });
+  }
+
+  Future<void> _sendTokenToBackend(
+    BuildContext context,
+    String token,
+  ) async {
+    try {
+      final profileRepo = context.read<ProfileRepository>();
+      await profileRepo.updateFcmToken(token);
+    } catch (_) {
+      // Quietly ignore errors for now
+    }
   }
 }

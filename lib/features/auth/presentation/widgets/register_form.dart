@@ -72,7 +72,7 @@ class _RegisterFormState extends State<RegisterForm> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         decoration: BoxDecoration(
-          color: const Color(0xFF020617).withOpacity(0.95),
+          color: const Color(0xFF020617).withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: const Color(0xFF111827)),
           boxShadow: const [
@@ -104,7 +104,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: accent.withOpacity(0.5),
+                        color: accent.withValues(alpha: 0.5),
                         blurRadius: 16,
                         spreadRadius: 2,
                       ),

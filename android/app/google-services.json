@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "206459370390",
+    "project_id": "unsub-9b2dd",
+    "storage_bucket": "unsub-9b2dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206459370390:android:278b894e45a97c8479bbb7",
+        "android_client_info": {
+          "package_name": "com.karamlyy.unsub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5bG49lfIFe17I0tEIRXXA6e9zYBJc_zE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
