@@ -115,8 +115,9 @@ class SubscriptionsCubit extends Cubit<SubscriptionsState> {
       (failure) => emit(SubscriptionsFailure(message: failure.message)),
       (_) {
         if (currentState is SubscriptionsLoaded) {
-          final updatedList =
-              currentState.items.where((s) => s.id != id).toList();
+          final updatedList = currentState.items
+              .where((s) => s.id != id)
+              .toList();
           emit(SubscriptionsLoaded(items: updatedList));
         } else {
           emit(const SubscriptionsLoaded(items: []));

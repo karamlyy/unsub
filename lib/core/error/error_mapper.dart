@@ -23,7 +23,8 @@ Failure mapDioErrorToFailure(DioException e) {
         return AuthFailure(backendMessage ?? 'Giriş icazən yoxdur.');
       }
       return ServerFailure(
-        backendMessage ?? 'Server xətası (${e.response?.statusCode ?? 'naməlum'}).',
+        backendMessage ??
+            'Server xətası (${e.response?.statusCode ?? 'naməlum'}).',
       );
 
     case DioExceptionType.cancel:

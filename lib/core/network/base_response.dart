@@ -16,9 +16,9 @@ class BaseResponse<T> extends Equatable {
   final DateTime timestamp;
 
   factory BaseResponse.fromJson(
-      Map<String, dynamic> json,
-      T Function(Object? json) fromJsonT,
-      ) {
+    Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) {
     return BaseResponse<T>(
       success: json['success'] as bool,
       statusCode: json['statusCode'] as int,

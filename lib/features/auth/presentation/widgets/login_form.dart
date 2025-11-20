@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../presentation/cubit/auth_cubit.dart';
+import '../../../../core/theme/theme_helper.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -43,10 +44,13 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    const accent = Color(0xFF22C55E); // yaşıl accent
-    const labelColor = Color(0xFF9CA3AF);
-    const titleColor = Color(0xFFF9FAFB);
-    const subtitleColor = Color(0xFF6B7280);
+    const accent = Color(0xFF22C55E);
+    final labelColor = ThemeHelper.subtitleColor(context);
+    final titleColor = ThemeHelper.titleColor(context);
+    final subtitleColor = ThemeHelper.subtitleColor(context);
+    final surface = Theme.of(context).colorScheme.surface;
+    final borderColor = ThemeHelper.borderColor(context);
+    final isDark = ThemeHelper.isDark(context);
 
     return BlocListener<AuthCubit, AuthState>(
       listenWhen: (prev, curr) => curr is AuthFailure,
@@ -59,17 +63,17 @@ class _LoginFormState extends State<LoginForm> {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         decoration: BoxDecoration(
-          color: const Color(0xFF020617).withOpacity(0.95),
+          color: surface,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: const Color(0xFF111827)),
-          boxShadow: const [
+          border: Border.all(color: borderColor),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x66000000),
+              color: isDark ? const Color(0x66000000) : const Color(0x1A000000),
               blurRadius: 32,
               spreadRadius: -8,
-              offset: Offset(0, 18),
+              offset: const Offset(0, 18),
             ),
           ],
         ),
@@ -107,7 +111,7 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                const Text(
+                Text(
                   'UnSub',
                   style: TextStyle(
                     color: titleColor,
@@ -118,13 +122,13 @@ class _LoginFormState extends State<LoginForm> {
               ],
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Abunəliklərini qaranlıqda itirmə. 😈',
               style: TextStyle(color: subtitleColor, fontSize: 13),
             ),
             const SizedBox(height: 28),
 
-            const Text(
+            Text(
               'Email',
               style: TextStyle(
                 color: labelColor,
@@ -141,7 +145,7 @@ class _LoginFormState extends State<LoginForm> {
 
             const SizedBox(height: 16),
 
-            const Text(
+            Text(
               'Şifrə',
               style: TextStyle(
                 color: labelColor,
@@ -169,7 +173,7 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Daxil olmaqla istifadə şərtlərini qəbul edirsən.',
                     style: TextStyle(color: subtitleColor, fontSize: 11),
@@ -212,7 +216,7 @@ class _LoginFormState extends State<LoginForm> {
                 onPressed: () {
                   Navigator.of(context).pushNamed('/register');
                 },
-                child: const Text(
+                child: Text(
                   'Hesabın yoxdur? Qeydiyyatdan keç',
                   style: TextStyle(color: labelColor, fontSize: 12),
                 ),

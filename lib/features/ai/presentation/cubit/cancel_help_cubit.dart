@@ -7,8 +7,8 @@ part 'cancel_help_state.dart';
 
 class CancelHelpCubit extends Cubit<CancelHelpState> {
   CancelHelpCubit({required AiRepository repository})
-      : _repository = repository,
-        super(const CancelHelpInitial());
+    : _repository = repository,
+      super(const CancelHelpInitial());
 
   final AiRepository _repository;
 
@@ -26,8 +26,8 @@ class CancelHelpCubit extends Cubit<CancelHelpState> {
     );
 
     result.fold(
-          (failure) => emit(CancelHelpFailure(message: failure.message)),
-          (model) => emit(CancelHelpLoaded(model: model)),
+      (failure) => emit(CancelHelpFailure(message: failure.message)),
+      (model) => emit(CancelHelpLoaded(model: model)),
     );
   }
 }

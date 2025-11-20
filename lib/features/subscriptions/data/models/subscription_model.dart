@@ -92,7 +92,6 @@ class SubscriptionModel extends Equatable {
     updatedAt,
   ];
 
-
   static double _parseDouble(dynamic value) {
     if (value is num) return value.toDouble();
     if (value is String) return double.tryParse(value) ?? 0.0;

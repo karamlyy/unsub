@@ -5,6 +5,7 @@ import '../features/auth/presentation/pages/register_page.dart';
 import '../features/subscriptions/presentation/pages/subscriptions_page.dart';
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 class AppRouter {
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -18,9 +19,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ProfilePage());
       default:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('Route not found')),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Route not found'))),
         );
     }
   }

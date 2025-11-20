@@ -7,8 +7,8 @@ part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required ProfileRepository profileRepository})
-      : _repository = profileRepository,
-        super(const ProfileInitial());
+    : _repository = profileRepository,
+      super(const ProfileInitial());
 
   final ProfileRepository _repository;
 
@@ -18,8 +18,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     final result = await _repository.getProfile();
 
     result.fold(
-          (failure) => emit(ProfileFailure(message: failure.message)),
-          (user) => emit(ProfileLoaded(user: user)),
+      (failure) => emit(ProfileFailure(message: failure.message)),
+      (user) => emit(ProfileLoaded(user: user)),
     );
   }
 }

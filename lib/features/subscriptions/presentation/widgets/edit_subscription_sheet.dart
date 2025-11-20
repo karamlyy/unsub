@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/subscription_model.dart';
 import '../cubit/subscriptions_cubit.dart';
+import '../../../../core/theme/theme_helper.dart';
+import '../../../../core/models/category_model.dart';
+import '../../../../core/services/categories_service.dart';
+import '../../../../core/network/api_client.dart';
 
 class EditSubscriptionSheet extends StatefulWidget {
   const EditSubscriptionSheet({super.key, required this.subscription});
@@ -14,23 +18,26 @@ class EditSubscriptionSheet extends StatefulWidget {
 
 class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
   late final TextEditingController _nameController;
-  late final TextEditingController _categoryController;
   late final TextEditingController _priceController;
   late final TextEditingController _currencyController;
   late final TextEditingController _notesController;
 
+  late String? _selectedCategory;
   late String _billingCycle;
   late DateTime _firstPaymentDate;
   late bool _isActive;
   bool _isSubmitting = false;
   bool _isDeleting = false;
+  
+  List<CategoryModel> _categories = [];
+  bool _loadingCategories = true;
 
   @override
   void initState() {
     super.initState();
     final s = widget.subscription;
     _nameController = TextEditingController(text: s.name);
-    _categoryController = TextEditingController(text: s.category ?? '');
+    _selectedCategory = s.category;
     _priceController = TextEditingController(
       text: s.price.toStringAsFixed(2),
     );
@@ -39,12 +46,29 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
     _billingCycle = s.billingCycle;
     _firstPaymentDate = s.firstPaymentDate;
     _isActive = s.isActive;
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final apiClient = context.read<ApiClient>();
+      final categoriesService = CategoriesService(apiClient: apiClient);
+      final categories = await categoriesService.getCategories();
+      setState(() {
+        _categories = categories;
+        _loadingCategories = false;
+      });
+    } catch (e) {
+      print('Error loading categories: $e');
+      setState(() {
+        _loadingCategories = false;
+      });
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _categoryController.dispose();
     _priceController.dispose();
     _currencyController.dispose();
     _notesController.dispose();
@@ -61,11 +85,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFF22C55E),
-              surface: Color(0xFF020617),
-              background: Color(0xFF020617),
-            ),
+            colorScheme: ThemeHelper.datePickerColorScheme(context),
           ),
           child: child ?? const SizedBox.shrink(),
         );
@@ -85,7 +105,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
     final name = _nameController.text.trim();
     final priceStr = _priceController.text.trim();
     final currency = _currencyController.text.trim().toUpperCase();
-    final category = _categoryController.text.trim();
+    final category = _selectedCategory;
     final notes = _notesController.text.trim();
 
     if (name.isEmpty || priceStr.isEmpty || currency.isEmpty) {
@@ -111,7 +131,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
     await cubit.updateSubscription(
       id: widget.subscription.id,
       name: name,
-      category: category.isEmpty ? null : category,
+      category: category,
       price: price,
       currency: currency,
       billingCycle: _billingCycle,
@@ -142,20 +162,24 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
+        final titleColor = ThemeHelper.titleColor(context);
+        final subtitleColor = ThemeHelper.subtitleColor(context);
+        final dialogBg = ThemeHelper.dialogBackground(context);
+        
         return AlertDialog(
-          backgroundColor: const Color(0xFF020617),
-          title: const Text(
+          backgroundColor: dialogBg,
+          title: Text(
             'Subscription-u sil',
             style: TextStyle(
-              color: Color(0xFFF9FAFB),
+              color: titleColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),
-          content: const Text(
+          content: Text(
             'Bu abunəliyi həqiqətən silmək istəyirsən? Bu əməliyyatı geri qaytarmaq olmur.',
             style: TextStyle(
-              color: Color(0xFF9CA3AF),
+              color: subtitleColor,
               fontSize: 13,
             ),
           ),
@@ -203,10 +227,10 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFF020617);
-    const handleColor = Color(0xFF4B5563);
-    const titleColor = Color(0xFFF9FAFB);
-    const subtitleColor = Color(0xFF9CA3AF);
+    final bg = ThemeHelper.sheetBackground(context);
+    final handleColor = ThemeHelper.handleColor(context);
+    final titleColor = ThemeHelper.titleColor(context);
+    final subtitleColor = ThemeHelper.subtitleColor(context);
 
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     final s = widget.subscription;
@@ -214,7 +238,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
-        color: Colors.black.withOpacity(0.4),
+        color: ThemeHelper.overlayColor(context),
         child: DraggableScrollableSheet(
           initialChildSize: 0.65,
           minChildSize: 0.45,
@@ -227,15 +251,17 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
                 top: 12,
                 bottom: bottomInset > 0 ? bottomInset + 16 : 20,
               ),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: bg,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0x99000000),
+                    color: ThemeHelper.isDark(context) 
+                        ? const Color(0x99000000) 
+                        : const Color(0x33000000),
                     blurRadius: 30,
                     spreadRadius: -4,
-                    offset: Offset(0, -12),
+                    offset: const Offset(0, -12),
                   ),
                 ],
               ),
@@ -257,7 +283,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           'Subscription-u redaktə et',
                           style: TextStyle(
                             color: titleColor,
@@ -268,7 +294,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
                         const SizedBox(width: 8),
                         Text(
                           s.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: subtitleColor,
                             fontSize: 12,
                           ),
@@ -277,7 +303,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    const Text(
+                    Text(
                       'Qiyməti, statusu və tarixi yenilə.',
                       style: TextStyle(
                         color: subtitleColor,
@@ -298,12 +324,20 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
 
                     _DarkLabel(text: 'Kateqoriya'),
                     const SizedBox(height: 6),
-                    TextField(
-                      controller: _categoryController,
-                      decoration: const InputDecoration(
-                        hintText: 'Entertainment, Productivity...',
-                      ),
-                    ),
+                    _loadingCategories
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : _CategoryDropdown(
+                            categories: _categories,
+                            value: _selectedCategory,
+                            onChanged: (value) {
+                              setState(() => _selectedCategory = value);
+                            },
+                          ),
                     const SizedBox(height: 14),
 
                     Row(
@@ -376,7 +410,7 @@ class _EditSubscriptionSheetState extends State<EditSubscriptionSheet> {
                         const _DarkLabel(text: 'Aktiv olsun'),
                         Switch(
                           value: _isActive,
-                          activeColor: const Color(0xFF22C55E),
+                          activeTrackColor: const Color(0xFF22C55E),
                           onChanged: (val) {
                             setState(() {
                               _isActive = val;
@@ -468,10 +502,46 @@ class _DarkLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
-        color: Color(0xFF9CA3AF),
+      style: TextStyle(
+        color: ThemeHelper.subtitleColor(context),
         fontSize: 12,
         fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+}
+
+class _CategoryDropdown extends StatelessWidget {
+  const _CategoryDropdown({
+    required this.categories,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final List<CategoryModel> categories;
+  final String? value;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final items = categories
+        .map((category) => DropdownMenuItem<String>(
+              value: category.name,
+              child: Text(category.name),
+            ))
+        .toList();
+
+    return DropdownButtonFormField<String>(
+      value: value,
+      items: items,
+      onChanged: onChanged,
+      dropdownColor: ThemeHelper.dropdownColor(context),
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        hintText: categories.isEmpty ? 'Kateqoriya yoxdur' : 'Kateqoriya seç',
+        hintStyle: TextStyle(
+          color: ThemeHelper.subtitleColor(context).withOpacity(0.6),
+        ),
       ),
     );
   }
@@ -511,7 +581,7 @@ class _BillingCycleDropdown extends StatelessWidget {
       value: value.toUpperCase(),
       items: items,
       onChanged: onChanged,
-      dropdownColor: const Color(0xFF020617),
+      dropdownColor: ThemeHelper.dropdownColor(context),
       decoration: const InputDecoration(
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       ),
@@ -531,36 +601,40 @@ class _DateField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formatted = date.toLocal().toString().split(' ').first;
+    final fillColor = ThemeHelper.inputFillColor(context);
+    final borderColor = ThemeHelper.borderColor(context);
+    final iconColor = ThemeHelper.subtitleColor(context);
+    final textColor = ThemeHelper.titleColor(context);
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Ink(
         decoration: BoxDecoration(
-          color: const Color(0xFF020617),
+          color: fillColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFF1F2937)),
+          border: Border.all(color: borderColor),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.calendar_today_outlined,
               size: 16,
-              color: Color(0xFF9CA3AF),
+              color: iconColor,
             ),
             const SizedBox(width: 8),
             Text(
               formatted,
-              style: const TextStyle(
-                color: Color(0xFFE5E7EB),
+              style: TextStyle(
+                color: textColor,
                 fontSize: 13,
               ),
             ),
             const Spacer(),
-            const Icon(
+            Icon(
               Icons.arrow_drop_down,
-              color: Color(0xFF6B7280),
+              color: iconColor,
             ),
           ],
         ),

@@ -6,7 +6,7 @@ import '../models/cancel_help_model.dart';
 
 class AiRemoteDataSource {
   AiRemoteDataSource({required ApiClient apiClient})
-      : _client = apiClient.client;
+    : _client = apiClient.client;
 
   final Dio _client;
 
@@ -26,7 +26,7 @@ class AiRemoteDataSource {
 
     return BaseResponse.fromJson(
       response.data!,
-          (json) => CancelHelpModel.fromJson(json as Map<String, dynamic>),
+      (json) => CancelHelpModel.fromJson(json as Map<String, dynamic>),
     );
   }
 }

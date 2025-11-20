@@ -5,6 +5,7 @@ import 'package:unsub/features/profile/data/repositories/profile_repository.dart
 import 'app.dart';
 import 'core/network/api_client.dart';
 import 'core/storage/secure_storage.dart';
+import 'core/theme/theme_cubit.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/subscriptions/data/repositories/subscriptions_repository.dart';
@@ -13,14 +14,8 @@ import 'features/subscriptions/presentation/cubit/subscriptions_cubit.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final secureStorage = SecureStorage();
-  final apiClient = ApiClient(secureStorage: secureStorage);
-
-  final authRepository = AuthRepository(
-    apiClient: apiClient,
-    secureStorage: secureStorage,
-  );
-  final subscriptionsRepository = SubscriptionsRepository(apiClient: apiClient);
+  // Load initial theme from storage before app starts
+  final initialTheme = await ThemeCubit.loadInitialTheme();
 
   runApp(
     MultiRepositoryProvider(
@@ -51,6 +46,9 @@ Future<void> main() async {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider<ThemeCubit>(
+            create: (context) => ThemeCubit(initialTheme),
+          ),
           BlocProvider<AuthCubit>(
             create: (context) =>
                 AuthCubit(authRepository: context.read<AuthRepository>())

@@ -19,6 +19,7 @@ dependencies:
 
   # Local storage (tokenlər üçün)
   flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.2.2
 
   # JSON
   json_annotation: ^4.9.0

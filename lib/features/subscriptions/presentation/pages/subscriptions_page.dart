@@ -32,7 +32,7 @@ class SubscriptionsPage extends StatelessWidget {
       ),
       body: const SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: _SubscriptionsBody(),
         ),
       ),
@@ -56,13 +56,15 @@ class _SubscriptionsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const titleColor = Color(0xFFF9FAFB);
-    const subtitleColor = Color(0xFF9CA3AF);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final titleColor = theme.textTheme.bodyMedium?.color ?? Colors.white;
+    final subtitleColor = isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Sənin abunəliklərin',
           style: TextStyle(
             color: titleColor,
@@ -71,7 +73,7 @@ class _SubscriptionsBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        const Text(
+        Text(
           'Netflix, Spotify, iCloud – hamısı bir yerdə.',
           style: TextStyle(color: subtitleColor, fontSize: 13),
         ),

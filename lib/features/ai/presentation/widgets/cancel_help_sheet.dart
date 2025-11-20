@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/ai_repository.dart';
 import '../cubit/cancel_help_cubit.dart';
+import '../../../../core/theme/theme_helper.dart';
 
 class CancelHelpSheet extends StatefulWidget {
-  const CancelHelpSheet({
-    super.key,
-    required this.subscriptionName,
-  });
+  const CancelHelpSheet({super.key, required this.subscriptionName});
 
   final String subscriptionName;
 
@@ -31,16 +29,17 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFF020617);
-    const titleColor = Color(0xFFF9FAFB);
-    const subtitleColor = Color(0xFF9CA3AF);
+    final bg = ThemeHelper.sheetBackground(context);
+    final titleColor = ThemeHelper.titleColor(context);
+    final subtitleColor = ThemeHelper.subtitleColor(context);
+    final handleColor = ThemeHelper.handleColor(context);
 
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
-        color: Colors.black.withOpacity(0.4),
+        color: ThemeHelper.overlayColor(context),
         child: DraggableScrollableSheet(
           initialChildSize: 0.5,
           minChildSize: 0.4,
@@ -53,15 +52,19 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
                 top: 12,
                 bottom: bottomInset > 0 ? bottomInset + 16 : 20,
               ),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: bg,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(26),
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Color(0x99000000),
+                    color: ThemeHelper.isDark(context)
+                        ? const Color(0x99000000)
+                        : const Color(0x33000000),
                     blurRadius: 30,
                     spreadRadius: -4,
-                    offset: Offset(0, -12),
+                    offset: const Offset(0, -12),
                   ),
                 ],
               ),
@@ -69,9 +72,7 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
                 builder: (context, state) {
                   if (state is CancelHelpLoading ||
                       state is CancelHelpInitial) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (state is CancelHelpFailure) {
@@ -79,10 +80,12 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(height: 8),
-                        const Icon(Icons.error_outline,
-                            color: Color(0xFFF97373)),
+                        const Icon(
+                          Icons.error_outline,
+                          color: Color(0xFFF97373),
+                        ),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           'AI cavabı alınmadı',
                           style: TextStyle(
                             color: titleColor,
@@ -93,10 +96,7 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
                         const SizedBox(height: 4),
                         Text(
                           state.message,
-                          style: const TextStyle(
-                            color: subtitleColor,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: subtitleColor, fontSize: 12),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 12),
@@ -128,7 +128,7 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF4B5563),
+                            color: handleColor,
                             borderRadius: BorderRadius.circular(999),
                           ),
                         ),
@@ -136,19 +136,16 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
                       const SizedBox(height: 12),
                       Text(
                         '"${widget.subscriptionName}" ləğv etmə təlimatı',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: titleColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'AI sənin üçün addım-addım ləğv etmə bələdçisi hazırladı:',
-                        style: TextStyle(
-                          color: subtitleColor,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: subtitleColor, fontSize: 12),
                       ),
                       const SizedBox(height: 14),
                       Expanded(
@@ -156,7 +153,7 @@ class _CancelHelpSheetState extends State<CancelHelpSheet> {
                           controller: scrollController,
                           child: Text(
                             text,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: titleColor,
                               fontSize: 13,
                               height: 1.4,

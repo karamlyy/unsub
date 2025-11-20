@@ -8,7 +8,7 @@ import '../data_sources/profile_remote_data_source.dart';
 
 class ProfileRepository {
   ProfileRepository({required ApiClient apiClient})
-      : _remote = ProfileRemoteDataSource(apiClient: apiClient);
+    : _remote = ProfileRemoteDataSource(apiClient: apiClient);
 
   final ProfileRemoteDataSource _remote;
 

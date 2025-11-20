@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../presentation/cubit/profile_cubit.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../../core/theme/theme_cubit.dart';
+import '../../../../core/theme/theme_state.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -30,12 +32,10 @@ class _ProfileView extends StatelessWidget {
     const accent = Color(0xFF22C55E);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil'),
-      ),
+      appBar: AppBar(title: const Text('Profil')),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: BlocBuilder<ProfileCubit, ProfileState>(
             builder: (context, state) {
               if (state is ProfileLoading || state is ProfileInitial) {
@@ -49,8 +49,10 @@ class _ProfileView extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.error_outline,
-                            color: Color(0xFFF97373)),
+                        const Icon(
+                          Icons.error_outline,
+                          color: Color(0xFFF97373),
+                        ),
                         const SizedBox(height: 8),
                         const Text(
                           'Profil yüklənmədi',
@@ -80,8 +82,6 @@ class _ProfileView extends StatelessWidget {
               }
 
               final user = state.user;
-              final createdAt =
-                  user.createdAt.toLocal().toString().split(' ').first;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,10 +109,7 @@ class _ProfileView extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF22C55E),
-                                Color(0xFF16A34A),
-                              ],
+                              colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -164,6 +161,35 @@ class _ProfileView extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   const Text(
+                    'Tənzimləmələr',
+                    style: TextStyle(
+                      color: titleColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  BlocBuilder<ThemeCubit, ThemeState>(
+                    builder: (context, themeState) {
+                      return _ThemeTile(
+                        isDarkMode: themeState.isDark,
+                        onChanged: (value) {
+                          context.read<ThemeCubit>().toggleTheme();
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 6),
+                  _ProfileTile(
+                    icon: Icons.lock_outline,
+                    title: 'Şifrəni dəyiş (coming soon)',
+                    subtitle: 'Tezliklə bu hissəni də aktiv edərik.',
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 18),
+
+                  const Text(
                     'Hesab',
                     style: TextStyle(
                       color: titleColor,
@@ -173,13 +199,6 @@ class _ProfileView extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
 
-                  _ProfileTile(
-                    icon: Icons.lock_outline,
-                    title: 'Şifrəni dəyiş (coming soon)',
-                    subtitle: 'Tezliklə bu hissəni də aktiv edərik.',
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 6),
                   _ProfileTile(
                     icon: Icons.logout,
                     title: 'Çıxış et',
@@ -211,6 +230,70 @@ class _ProfileView extends StatelessWidget {
   }
 }
 
+class _ThemeTile extends StatelessWidget {
+  const _ThemeTile({required this.isDarkMode, required this.onChanged});
+
+  final bool isDarkMode;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final surface = Theme.of(context).colorScheme.surface;
+    final borderColor = Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF111827)
+        : const Color(0xFFE5E7EB);
+    final titleColor =
+        Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white;
+    final subtitleColor = Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF9CA3AF)
+        : const Color(0xFF6B7280);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isDarkMode ? Icons.dark_mode : Icons.light_mode,
+            color: titleColor,
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isDarkMode ? 'Qaranlıq rejim' : 'İşıqlı rejim',
+                  style: TextStyle(
+                    color: titleColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isDarkMode ? 'İşıqlı rejimə keç.' : 'Qaranlıq rejimə keç.',
+                  style: TextStyle(color: subtitleColor, fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: isDarkMode,
+            onChanged: onChanged,
+            activeTrackColor: const Color(0xFF22C55E),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ProfileTile extends StatelessWidget {
   const _ProfileTile({
     required this.icon,
@@ -228,10 +311,15 @@ class _ProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const surface = Color(0xFF020617);
-    const border = Color(0xFF111827);
-    const titleColor = Color(0xFFF9FAFB);
-    const subtitleColor = Color(0xFF9CA3AF);
+    final surface = Theme.of(context).colorScheme.surface;
+    final borderColor = Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF111827)
+        : const Color(0xFFE5E7EB);
+    final titleColor =
+        Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white;
+    final subtitleColor = Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF9CA3AF)
+        : const Color(0xFF6B7280);
 
     final color = isDestructive ? const Color(0xFFF97373) : titleColor;
 
@@ -241,9 +329,9 @@ class _ProfileTile extends StatelessWidget {
       child: Ink(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: surface.withOpacity(0.96),
+          color: surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: border),
+          border: Border.all(color: borderColor),
         ),
         child: Row(
           children: [
@@ -264,19 +352,12 @@ class _ProfileTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      color: subtitleColor,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: subtitleColor, fontSize: 11),
                   ),
                 ],
               ),
             ),
-            const Icon(
-              Icons.chevron_right,
-              color: subtitleColor,
-              size: 18,
-            ),
+            Icon(Icons.chevron_right, color: subtitleColor, size: 18),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../presentation/cubit/auth_cubit.dart';
+import '../../../../core/theme/theme_helper.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -55,32 +56,35 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     const accent = Color(0xFF22C55E);
-    const labelColor = Color(0xFF9CA3AF);
-    const titleColor = Color(0xFFF9FAFB);
-    const subtitleColor = Color(0xFF6B7280);
+    final labelColor = ThemeHelper.subtitleColor(context);
+    final titleColor = ThemeHelper.titleColor(context);
+    final subtitleColor = ThemeHelper.subtitleColor(context);
+    final surface = Theme.of(context).colorScheme.surface;
+    final borderColor = ThemeHelper.borderColor(context);
+    final isDark = ThemeHelper.isDark(context);
 
     return BlocListener<AuthCubit, AuthState>(
       listenWhen: (prev, curr) => curr is AuthFailure,
       listener: (context, state) {
         if (state is AuthFailure) {
           final msg = state.message.replaceFirst('Exception: ', '');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(msg)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(msg)));
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         decoration: BoxDecoration(
-          color: const Color(0xFF020617).withOpacity(0.95),
+          color: surface,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: const Color(0xFF111827)),
-          boxShadow: const [
+          border: Border.all(color: borderColor),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x66000000),
+              color: isDark ? const Color(0x66000000) : const Color(0x1A000000),
               blurRadius: 32,
               spreadRadius: -8,
-              offset: Offset(0, 18),
+              offset: const Offset(0, 18),
             ),
           ],
         ),
@@ -97,10 +101,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF22C55E),
-                        Color(0xFF16A34A),
-                      ],
+                      colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -121,7 +122,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                const Text(
+                Text(
                   'UnSub',
                   style: TextStyle(
                     color: titleColor,
@@ -132,16 +133,13 @@ class _RegisterFormState extends State<RegisterForm> {
               ],
             ),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Yeni hesab yarat və abunəliklərini tək yerdən idarə et.',
-              style: TextStyle(
-                color: subtitleColor,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: subtitleColor, fontSize: 13),
             ),
             const SizedBox(height: 24),
 
-            const Text(
+            Text(
               'Ad',
               style: TextStyle(
                 color: labelColor,
@@ -152,13 +150,11 @@ class _RegisterFormState extends State<RegisterForm> {
             const SizedBox(height: 6),
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                hintText: 'Karam Afandi',
-              ),
+              decoration: const InputDecoration(hintText: 'Karam Afandi'),
             ),
             const SizedBox(height: 14),
 
-            const Text(
+            Text(
               'Email',
               style: TextStyle(
                 color: labelColor,
@@ -169,14 +165,12 @@ class _RegisterFormState extends State<RegisterForm> {
             const SizedBox(height: 6),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                hintText: 'user@example.com',
-              ),
+              decoration: const InputDecoration(hintText: 'user@example.com'),
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 14),
 
-            const Text(
+            Text(
               'Şifrə',
               style: TextStyle(
                 color: labelColor,
@@ -187,9 +181,7 @@ class _RegisterFormState extends State<RegisterForm> {
             const SizedBox(height: 6),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(
-                hintText: '••••••••',
-              ),
+              decoration: const InputDecoration(hintText: '••••••••'),
               obscureText: true,
             ),
             const SizedBox(height: 20),
@@ -205,13 +197,10 @@ class _RegisterFormState extends State<RegisterForm> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Qeydiyyatla şərtləri və məxfilik siyasətini qəbul edirsən.',
-                    style: TextStyle(
-                      color: subtitleColor,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: subtitleColor, fontSize: 11),
                   ),
                 ),
               ],
@@ -225,17 +214,20 @@ class _RegisterFormState extends State<RegisterForm> {
                 return SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : () => _onRegisterPressed(context),
+                    onPressed: isLoading
+                        ? null
+                        : () => _onRegisterPressed(context),
                     child: isLoading
                         ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.black),
-                      ),
-                    )
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.black,
+                              ),
+                            ),
+                          )
                         : const Text('Qeydiyyatdan keç'),
                   ),
                 );
@@ -248,12 +240,9 @@ class _RegisterFormState extends State<RegisterForm> {
                 onPressed: () {
                   Navigator.of(context).pop(); // login-ə geri
                 },
-                child: const Text(
+                child: Text(
                   'Artıq hesabın var? Daxil ol',
-                  style: TextStyle(
-                    color: labelColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: labelColor, fontSize: 12),
                 ),
               ),
             ),

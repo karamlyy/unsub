@@ -8,7 +8,7 @@ import '../models/cancel_help_model.dart';
 
 class AiRepository {
   AiRepository({required ApiClient apiClient})
-      : _remote = AiRemoteDataSource(apiClient: apiClient);
+    : _remote = AiRemoteDataSource(apiClient: apiClient);
 
   final AiRemoteDataSource _remote;
 

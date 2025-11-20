@@ -2,11 +2,9 @@ import 'package:dio/dio.dart';
 import '../storage/secure_storage.dart';
 
 class AuthInterceptor extends Interceptor {
-  AuthInterceptor({
-    required SecureStorage secureStorage,
-    required Dio dio,
-  })  : _secureStorage = secureStorage,
-        _dio = dio;
+  AuthInterceptor({required SecureStorage secureStorage, required Dio dio})
+    : _secureStorage = secureStorage,
+      _dio = dio;
 
   final SecureStorage _secureStorage;
   final Dio _dio;
@@ -15,9 +13,9 @@ class AuthInterceptor extends Interceptor {
 
   @override
   Future<void> onRequest(
-      RequestOptions options,
-      RequestInterceptorHandler handler,
-      ) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final token = await _secureStorage.getAccessToken();
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
@@ -38,9 +36,9 @@ class AuthInterceptor extends Interceptor {
 
   @override
   Future<void> onError(
-      DioException err,
-      ErrorInterceptorHandler handler,
-      ) async {
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     // Refresh yalnız 401 badResponse və uyğun endpoint-lər üçün
     final statusCode = err.response?.statusCode;
     if (statusCode == 401 &&
@@ -66,8 +64,7 @@ class AuthInterceptor extends Interceptor {
           ),
         );
 
-        final refreshResponse =
-        await refreshDio.post<Map<String, dynamic>>(
+        final refreshResponse = await refreshDio.post<Map<String, dynamic>>(
           '/auth/refresh',
           data: {'refreshToken': refreshToken},
         );
@@ -94,8 +91,9 @@ class AuthInterceptor extends Interceptor {
         final RequestOptions requestOptions = err.requestOptions;
         requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
 
-        final Response<dynamic> retryResponse =
-        await _dio.fetch(requestOptions);
+        final Response<dynamic> retryResponse = await _dio.fetch(
+          requestOptions,
+        );
 
         // Artıq bu cavabı istifadə et
         handler.resolve(retryResponse);

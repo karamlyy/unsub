@@ -8,8 +8,11 @@ class SubscriptionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const textColor = Color(0xFFE5E7EB);
-    const subtitleColor = Color(0xFF6B7280);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = theme.textTheme.bodyMedium?.color ?? Colors.white;
+    final subtitleColor = isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF);
+    final iconColor = isDark ? const Color(0xFF4B5563) : const Color(0xFF9CA3AF);
 
     return BlocBuilder<SubscriptionsCubit, SubscriptionsState>(
       builder: (context, state) {
@@ -28,7 +31,7 @@ class SubscriptionList extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Nəsə alınmadı',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: textColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -37,7 +40,7 @@ class SubscriptionList extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     state.message,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: subtitleColor,
                       fontSize: 12,
                     ),
@@ -54,13 +57,13 @@ class SubscriptionList extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Icon(
                       Icons.nightlight_round,
-                      color: Color(0xFF4B5563),
+                      color: iconColor,
                       size: 42,
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       'Hələ abunəliyin yoxdur',
                       style: TextStyle(
@@ -69,9 +72,9 @@ class SubscriptionList extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      '“+” düyməsinə bas və ilk subscription-u əlavə et. Qaranlıqdan xilas ol 😉',
+                      '"+" düyməsinə bas və ilk subscription-u əlavə et. Qaranlıqdan xilas ol 😉',
                       style: TextStyle(
                         color: subtitleColor,
                         fontSize: 12,

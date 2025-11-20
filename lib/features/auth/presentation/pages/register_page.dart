@@ -7,17 +7,18 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final bgColor = Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
       body: SafeArea(
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF020617), Color(0xFF020617), Color(0xFF020617)],
+              colors: [bgColor, bgColor, bgColor],
             ),
           ),
           child: Center(

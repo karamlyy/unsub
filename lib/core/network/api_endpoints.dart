@@ -13,5 +13,9 @@ class ApiEndpoints {
   // Users
   static const String me = '/users/me';
 
+  // AI
   static const String smartCancelHelp = '/ai/cancel-help';
+
+  // Categories
+  static const String categories = '/categories';
 }
