@@ -35,13 +35,11 @@ class SubscriptionCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () {
-        // Tap → edit bottom sheet
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
-          builder: (context) =>
-              EditSubscriptionSheet(subscription: subscription),
+          builder: (context) => EditSubscriptionSheet(subscription: subscription),
         );
       },
       child: Container(
@@ -100,43 +98,22 @@ class SubscriptionCard extends StatelessWidget {
               ),
             ),
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (ctx) =>
-                          buildCancelHelpSheet(ctx, subscription.name),
-                    );
-                  },
-                  icon: Icon(CupertinoIcons.sparkles, size: 18, color: warning),
-                  tooltip: 'Ləğv etməyə kömək et (AI)',
-                ),
-              ],
+            IconButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (ctx) => buildCancelHelpSheet(ctx, subscription.name),
+                );
+              },
+              icon: Icon(CupertinoIcons.sparkles, size: 18, color: warning),
+              tooltip: 'Ləğv etməyə kömək et (AI)',
             ),
           ],
         ),
       ),
     );
-  }
-
-  String _billingCycleText(String value) {
-    switch (value.toUpperCase()) {
-      case 'DAILY':
-        return 'Gündəlik';
-      case 'WEEKLY':
-        return 'Həftəlik';
-      case 'MONTHLY':
-        return 'Aylıq';
-      case 'YEARLY':
-        return 'İllik';
-      default:
-        return value;
-    }
   }
 }
 
